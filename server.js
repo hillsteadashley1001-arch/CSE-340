@@ -1,30 +1,39 @@
-/* ******************************************
- * This server.js file is the primary file of the 
- * application. It is used to control the project.
- *******************************************/
-/* ***********************
- * Require Statements
- *************************/
-const express = require("express")
-const env = require("dotenv").config()
-const app = express()
-const static = require("./routes/static")
+// server.js
+require("dotenv").config();
+const path = require("path");
+const express = require("express");
+const expressLayouts = require("express-ejs-layouts");
 
-/* ***********************
- * Routes
- *************************/
-app.use(static)
+const app = express();
 
-/* ***********************
- * Local Server Information
- * Values from .env (environment) file
- *************************/
-const port = process.env.PORT
-const host = process.env.HOST
+// Views
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(expressLayouts);
+// Optional: explicitly set layout file name
+app.set("layout", "layout"); // uses views/layout.ejs
 
-/* ***********************
- * Log statement to confirm server operation
- *************************/
-app.listen(port, () => {
-  console.log(`app listening on ${host}:${port}`)
-})
+// Static
+app.use(express.static(path.join(__dirname, "public")));
+
+// Default title fallback
+app.use((req, res, next) => {
+  res.locals.title = "CSE Motors";
+  next();
+});
+
+// Routes
+app.get("/", (req, res) => {
+  res.render("index", { title: "Home" });
+});
+
+// 404
+app.use((req, res) => {
+  res.status(404).render("404", { title: "Not Found" });
+});
+
+const PORT = process.env.PORT || 5500;
+const HOST = process.env.HOST || "localhost";
+app.listen(PORT, () => {
+  console.log(`app listening on ${HOST}:${PORT}`);
+});

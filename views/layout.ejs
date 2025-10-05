@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+	<%- include('./partials/head', { title: (typeof title !== 'undefined' && title) ? title : 'CSE Motors' }) %>
+<body>
+
+	<div class="page">
+		<div class="page-inner">
+			<!-- Header and account link only (no primary nav here) -->
+			<%- include('./partials/header') %>
+
+			<!-- Single source of truth for the primary nav -->
+			<%- include('./partials/nav', { active: (typeof active !== 'undefined' ? active : '') }) %>
+
+			<main id="main" role="main">
+				<%- body %>
+			</main>
+
+			<%- include('./partials/footer') %>
+		</div>
+	</div>
+
+	<!-- Page-specific scripts can be injected via 'scripts' local -->
+	<script src="/js/script.js" defer></script>
+	<%- typeof scripts !== 'undefined' ? scripts : '' %>
+</body>
+</html>

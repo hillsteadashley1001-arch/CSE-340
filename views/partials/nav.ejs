@@ -1,0 +1,19 @@
+<nav class="site-nav" aria-label="Primary">
+	<ul>
+		<li class="<%= (active === 'home') ? 'active' : '' %>">
+			<a href="/">Home</a>
+		</li>
+		<li class="<%= (active === 'custom') ? 'active' : '' %>">
+			<a href="/custom">Custom</a>
+		</li>
+		<li class="<%= (active === 'sedan') ? 'active' : '' %>">
+			<a href="/inventory/sedan">Sedan</a>
+		</li>
+		<li class="<%= (active === 'suv') ? 'active' : '' %>">
+			<a href="/inventory/suv">SUV</a>
+		</li>
+		<li class="<%= (active === 'truck') ? 'active' : '' %>">
+			<a href="/inventory/truck">Truck</a>
+		</li>
+	</ul>
+</nav>

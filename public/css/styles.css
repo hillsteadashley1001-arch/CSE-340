@@ -1,6 +1,256 @@
-/******* Change Box Model ***************/
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
+/* public/css/styles.css */
+
+/* ===== Reset ===== */
+
+/* ===== Theme ===== */
+:root{
+	--ink-900:#1b1e24;
+	--ink-700:#334154;
+	--muted:#5e6a76;
+
+	--teal:#23b7bf;          /* outer frame */
+	--nav-bg:#222733;
+	--nav-pill:#2c3241;
+	--nav-pill-active:#3a4154;
+
+	--link-blue:#0d6efd;
+	--tile-blue:#0ea5e9;
+
+	--page:#fff;
+	--panel:#fff;
+	--panel-border:#d8e1ea;
+
+	--shadow-sm:0 2px 8px rgba(0,0,0,.08);
+	--shadow:0 8px 24px rgba(0,0,0,.12);
+}
+
+/* ===== Typography & background ===== */
+body{
+	font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+	color:var(--ink-900);
+	background:#000 url('/images/site/checkerboard.jpg') repeat;
+	background-size:80px 80px;
+  text-decoration: none;
+}
+h1,h2,h3{
+	font-family:"Roboto Slab", Georgia, serif;
+	line-height:1.2;
+	margin:.4rem 0;
+}
+h1{font-size:1.45rem}
+h2{font-size:1.25rem}
+h3{font-size:1.05rem}
+
+/* ===== Page frame ===== */
+.page{
+	max-width:880px;
+	margin:0 auto;
+	background:var(--page);
+	border:6px solid var(--teal);
+	border-radius:10px;
+	box-shadow:var(--shadow);
+}
+.page-inner{padding:.6rem .6rem 1rem}
+
+/* ===== Header ===== */
+.site-header{padding:.25rem .25rem .25rem}
+.site-header .container{display:flex;justify-content:space-between;align-items:center}
+.siteName a{font-weight:800;font-size:1.32rem}
+.site-tools a{font-size:.82rem;color:#4a5565;text-decoration:none}
+.site-tools a:hover{text-decoration:underline}
+
+/* ===== Nav (compact) ===== */
+.site-nav{
+	background:var(--nav-bg);
+	border-radius:4px;
+	margin:.35rem .15rem 0; /* tight to header */
+}
+.site-nav ul{display:flex;gap:.35rem;padding:.3rem .35rem}
+.site-nav a{
+	display:block;padding:.4rem .8rem;border-radius:4px;
+	background:var(--nav-pill);color:#f3f6fa;font-weight:700;font-size:.84rem;
+}
+.site-nav li.active a{background:var(--nav-pill-active)}
+.site-nav a:hover,.site-nav a:focus{background:#414a5d}
+
+/* ===== Main ===== */
+main{padding:.75rem .2rem 1rem}
+
+/* ===== HERO: full‑bleed image + translucent overlay (text) + solid button box ===== */
+
+/* Stack hero content and allow absolute overlay on large screens */
+.hero{
+	position:relative;
+	display:block;
+	margin:0;
+}
+
+/* Car image spans entire white card width */
+.hero-art{position:relative}
+.hero-art img{
+	display:block;
+	width:100%;
+	max-width:none;  /* truly full‑bleed within the card */
+	height:auto;
+	margin:0;
+}
+
+/* Remove any old decorative slab */
+.hero-art::before{content:none !important}
+
+/* Overlay that CONTAINS the heading + features + button box */
+.hero-copy{position:static} /* normal flow on mobile */
+
+/* Translucent overlay card */
+.cta-card{
+	background:rgba(238,242,246,0.82);
+	backdrop-filter:saturate(120%) blur(2px);
+	-webkit-backdrop-filter:saturate(120%) blur(2px);
+	border:1px solid rgba(180,192,205,.5);
+	border-radius:8px;
+	box-shadow:none;
+	max-width:320px;
+	padding:.85rem;
+}
+
+/* Solid (non‑transparent) button container inside the translucent overlay */
+
+/* Button inside the solid box */
+.cta-btn-box .btn{padding:.5rem 1rem;border-radius:.45rem}
+
+/* Overlay text */
+#model-title{color:#0b6faa;margin:0 0 .35rem}
+.features{margin:.4rem 0 .8rem;padding-left:1.15rem}
+.features li{margin:.14rem 0}
+
+/* Headline spacing */
+.hero h2{margin:.1rem 0 .6rem}
+
+/* ===== Split section (Upgrades | Reviews) ===== */
+/* Mobile: stack */
+.split{
+	display: grid;
+	gap: 1rem;
+	margin-top: .75rem;
+}
+
+/* Tablet/desktop: two columns side-by-side */
+@media (min-width: 58rem){
+	.split{
+		grid-template-columns: 1fr 1fr;   /* upgrades | reviews */
+		align-items: start;
+	}
+}
+
+/* Panels */
+.panel{
+	background: var(--panel);
+	border: 1px solid var(--panel-border);
+	border-radius: 8px;
+	padding: .75rem;
+	box-shadow: var(--shadow-sm);
+}
+.panel h3{ font-weight: 800; margin: 0 0 .5rem }
+
+/* Upgrades grid: exactly 2 columns x 2 rows on larger screens */
+.grid{
+	display: grid;
+	grid-template-columns: 1fr 1fr;   /* always 2-wide */
+	gap: .9rem .9rem;
+	margin: 0;
+	padding: 0;
+}
+
+/* Optional: enforce 2 rows of similar height so it visually pairs with reviews */
+@media (min-width: 58rem){
+	.grid{
+		grid-auto-rows: 1fr;          /* cards same height if content differs */
+	}
+}
+
+/* Card styling stays the same */
+.card{ border: none; background: transparent; text-align: center }
+.card a{ display: flex; flex-direction: column; align-items: center; gap: .35rem }
+.card img{
+	background: var(--tile-blue);
+	border: 2px solid #0b6faa;
+	border-radius: .35rem;
+	padding: .55rem;
+	width: 84px; height: 64px;
+	object-fit: contain;
+	box-shadow: var(--shadow-sm);
+}
+.caption{ color: var(--link-blue); text-decoration: underline; font-size: .9rem }
+
+/* Reviews list stays as-is */
+.reviews{ margin: .25rem 0 0 1rem; padding: 0 }
+.reviews li{ margin: .6rem 0 }
+.reviews blockquote{ margin: 0 }
+.rating{ margin-left: .35rem; color: var(--muted) }
+
+/* Overlay block on top of the car image */
+.hero{
+	position: relative;      /* create positioning context */
+}
+
+/* On mobile: card sits above image in normal flow */
+.hero-copy{
+	position: static;
+}
+
+/* On larger screens: float the overlay on the image */
+@media (min-width: 58rem){
+	.hero-copy{
+		position: absolute;
+		z-index: 2;            /* above the image */
+		left: 1.25rem;         /* tweak to place over left of car */
+		top: 1.25rem;
+		max-width: 340px;      /* keep readable width */
+	}
+}
+
+/* Make sure the image fills the white area behind */
+.hero-art img{
+	display: block;
+	width: 100%;
+	max-width: none;
+	height: auto;
+}
+
+/* Translucent info block (contains title + features) */
+.cta-card{
+	background: rgba(238,242,246,0.82);
+	backdrop-filter: saturate(120%) blur(2px);
+	-webkit-backdrop-filter: saturate(120%) blur(2px);
+	border: 1px solid rgba(180,192,205,.5);
+	border-radius: 8px;
+	padding: .85rem;
+}
+
+/* Solid button box inside the translucent card */
+.cta-btn-box{
+	display: inline-block;
+	border-radius: .5rem;
+}
+.cta-btn-box .btn{ padding: .5rem 1rem; border-radius: .45rem }
+
+@media (min-width: 58rem){
+	.split > .panel{ height: 100% }
+}
+
+/* Remove bullets from all lists by default */
+ul{ list-style: none; padding-left: 0; }
+
+/* Keep bullets only in the Reviews panel */
+.reviews{ list-style: disc; padding-left: 1.25rem; }
+.reviews li{ list-style: disc; }
+
+/* Also make sure the specs list in the hero has no bullets */
+.features{ list-style: none; padding-left: 0; }
+
+/* Remove borders from the two lower panels (Upgrades and Reviews) */
+.split > .panel{
+	border: 0;                      /* no border */
+	/* keep the rounded white panel and soft shadow if you like */
+	/* box-shadow: var(--shadow-sm);  border-radius already set earlier */
 }
