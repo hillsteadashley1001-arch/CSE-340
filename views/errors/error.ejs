@@ -1,0 +1,24 @@
+<!-- views/errors/error.ejs -->
+<%- include("../partials/header", { title }) %>
+
+<main id="main">
+  <section class="container error-view" aria-labelledby="error-title">
+    <h1 id="error-title"><%= status %> — <%= title %></h1>
+
+    <p class="error-view__message"><%= message %></p>
+
+    <div class="error-view__actions">
+      <a class="btn" href="/">Back to Home</a>
+      <a class="btn btn-secondary" href="javascript:history.back()">Go Back</a>
+    </div>
+
+    <% if (typeof stack !== "undefined" && stack) { %>
+      <details class="error-view__details">
+        <summary>Technical details</summary>
+        <pre><code><%= stack %></code></pre>
+      </details>
+    <% } %>
+  </section>
+</main>
+
+<%- include("../partials/footer") %>

@@ -1,5 +1,13 @@
-<main id="main" role="main" class="container">
-	<h1>404</h1>
-	<p>The page you requested was not found.</p>
-	<p><a class="btn btn-primary" href="/">Go to Home</a></p>
+<!-- views/404.ejs (unused) -->
+<!-- Note: This template is not used. All errors (including 404) are rendered by views/errors/error.ejs via the global error handler. -->
+<%- include("./partials/header", { title: "Page Not Found" }) %>
+
+<main id="main">
+  <section class="container">
+    <h1>404 — Page Not Found</h1>
+    <p>This standalone 404 template is kept only for reference. The app renders errors/errors.ejs instead.</p>
+    <p><a class="btn" href="/">Back to Home</a></p>
+  </section>
 </main>
+
+<%- include("./partials/footer") %>

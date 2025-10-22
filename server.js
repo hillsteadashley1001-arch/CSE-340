@@ -1,39 +1,67 @@
 // server.js
 require("dotenv").config();
-const path = require("path");
-const express = require("express");
-const expressLayouts = require("express-ejs-layouts");
 
-const app = express();
+const http = require("http");
+const app = require("./app");
 
-// Views
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-app.use(expressLayouts);
-// Optional: explicitly set layout file name
-app.set("layout", "layout"); // uses views/layout.ejs
+const PORT = normalizePort(process.env.PORT || "3000");
+app.set("port", PORT);
 
-// Static
-app.use(express.static(path.join(__dirname, "public")));
+const server = http.createServer(app);
 
-// Default title fallback
-app.use((req, res, next) => {
-  res.locals.title = "CSE Motors";
-  next();
+server.listen(PORT, () => {
+  // eslint-disable-next-line no-console
+  console.log(`Server listening on http://localhost:${PORT}`);
 });
 
-// Routes
-app.get("/", (req, res) => {
-  res.render("index", { title: "Home" });
-});
+server.on("error", onError);
+server.on("listening", onListening);
 
-// 404
-app.use((req, res) => {
-  res.status(404).render("404", { title: "Not Found" });
-});
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+  if (Number.isNaN(port)) return val; // named pipe
+  if (port >= 0) return port; // port number
+  return false;
+}
 
-const PORT = process.env.PORT || 5500;
-const HOST = process.env.HOST || "localhost";
-app.listen(PORT, () => {
-  console.log(`app listening on ${HOST}:${PORT}`);
-});
+function onError(error) {
+  if (error.syscall !== "listen") throw error;
+
+  const bind = typeof PORT === "string" ? `Pipe ${PORT}` : `Port ${PORT}`;
+
+  switch (error.code) {
+    case "EACCES":
+      console.error(`${bind} requires elevated privileges`);
+      process.exit(1);
+      break;
+    case "EADDRINUSE":
+      console.error(`${bind} is already in use`);
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+function onListening() {
+  const addr = server.address();
+  const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
+  // eslint-disable-next-line no-console
+  console.log(`Listening on ${bind}`);
+}
+
+// Graceful shutdown
+function shutdown(signal) {
+  // eslint-disable-next-line no-console
+  console.log(`${signal} received. Closing server...`);
+  server.close((err) => {
+    if (err) {
+      console.error("Error closing server", err);
+      process.exit(1);
+    }
+    process.exit(0);
+  });
+}
+
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));

@@ -1,0 +1,15 @@
+<!-- views/inventory/detail.ejs -->
+<%- include("../partials/header", { title }) %>
+
+<main id="main">
+  <div class="container">
+    <nav aria-label="Breadcrumb" class="breadcrumb">
+      <a href="/">Home</a> /
+      <span aria-current="page"><%= title %></span>
+    </nav>
+
+    <%- content %>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>

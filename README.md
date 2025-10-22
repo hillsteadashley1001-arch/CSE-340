@@ -1,47 +1,147 @@
-## Getting Started
+## CSE 340 — CSE Motors
 
-This document is intended to get you started quickly in building a backend driven Node.js application complete with pages and content, backend logic and a PostgreSQL database for data storage.
-## Prerequisites
+A Node.js + Express + EJS app with PostgreSQL that delivers inventory by classification and a dynamic vehicle detail view. Includes centralized error handling and an intentional 500 test route.
 
-The only prerequisite software required to have installed at this point is Git for version control and a code editor - we will use VS Code (VSC).
+### Prerequisites
 
-## Package Management
+- Node.js LTS
+- PostgreSQL running locally or a connection string for your DB
+- Git
 
-The foundation of the project development software is Node. While functional, Node depends on "packages" to add functionality to accomplish common tasks. This requires a package manager. Three common managers are NPM (Node Package Manager), YARN, and PNPM. While all do the same thing, they do it slightly differently. We will use PNPM for two reasons: 1) All packages are stored on your computer only once and then symlinks (system links) are created from the package to the project as needed, 2) performance is increased meaning that when the project builds, it does so faster.
-You will need to either install or activate PNPM before using it. See https://pnpm.io/
+### Setup
 
-## Install the Project Dependencies
+1. Clone and install
 
-1. Open the downloaded project folder (where this file is located) in VS Code (VSC).
-2. Open the VSC terminal: Terminal > New Window.
-3. Run the following command in the terminal:
+```bash
+git clone <your-repo-url>
+cd <your-folder>
+npm install
+```
 
-    pnpm install
+1. Environment
 
-4. The first time it may take a few minutes, depending on the speed of your computer and the speed of your Internet connection. This command will instruct PNPM to read the package.json file and download and install the dependencies (packages) needed for the project. It will build a "node_modules" folder storing each dependency and its dependencies. It should also create a pnpm-lock.yaml file. This file should NEVER be altered by you. It is an internal file (think of it as an inventory) that PNPM uses to keep track of everything in the project.
+Create a .env file at the project root:
 
-## Start the Express Server
+```
+DATABASE_URL=postgres://user:[password@localhost:5432](mailto:password@localhost:5432)/cse340
+PORT=3000
+NODE_ENV=development
+```
 
-With the packages installed you're ready to run the initial test.
-1. If the VSC terminal is still open use it. If it is closed, open it again using the same command as before.
-2. Type the following command, then press Enter:
+1. Database
+- Ensure the inventory table exists with columns:
+    
+    inv_id, inv_make, inv_model, inv_year, inv_price, inv_miles, inv_color, inv_description, inv_image, inv_thumbnail, classification_id
+    
+- Seed data as needed.
 
-    pnpm run dev
+### Run
 
-3. If the command works, you should see the message "app listening on localhost:5500" in the console.
-4. Open the package.json file.
-5. Note the "Scripts" area? There is a line with the name of "dev", which tells the nodemon package to run the server.js file.
-6. This is the command you just ran.
-7. Open the server.js file.
-8. Near the bottom you'll see two variables "Port" and "Host". The values for the variables are stored in the .env file.
-9. These variables are used when the server starts on your local machine.
+- Development (with nodemon)
 
-## Move the demo file
+```bash
+npm run dev
+```
 
-When you installed Git and cloned the remote repository in week 1, you should have created a simple web page.
-1. Find and move that simple web page to the public folder. Be sure to note its name.
-## Test in a browser
+- Production
 
-1. Go to http://localhost:5500 in a browser tab. Nothing should be visible as the server has not been setup to repond to that route.
-2. Add "/filename.html" to the end of the URL (replacing filename with the name of the file you moved to the public folder).
-3. You should see that page in the browser.
+```bash
+npm start
+```
+
+- Server entry point: server.js
+- App entry (Express app): app.js
+
+### Project Structure
+
+- app.js — Express app, routes, static, global error handler
+- server.js — HTTP server bootstrap
+- controllers/
+    - inventoryController.js — builds vehicle detail view
+    - siteController.js — home and intentional 500 route
+- models/
+    - inventory-model.js — getVehicleById (parameterized)
+- routes/
+    - inventoryRoute.js — /inv/detail/:inv_id
+    - siteRoute.js — /, /cause-error
+    - static.js — static asset serving (optional if app.js already serves /public)
+- utilities/
+    - index.js — formatUSD, formatMiles, buildVehicleDetailHTML, asyncHandler
+- views/
+    - inventory/detail.ejs — single dynamic detail template
+    - errors/error.ejs — used by centralized error handler
+    - index.ejs — home
+    - partials/head.ejs — includes /css/styles.css
+    - partials/header.ejs, partials/nav.ejs, partials/footer.ejs
+- public/
+    - css/styles.css — responsive, accessible layout
+    - js/script.js — minimal enhancements
+    - images/ — site and vehicle images
+
+### Key Routes
+
+- Classification (example)
+    - GET /inv/type/:slug — e.g., sedan, suv, truck
+- Detail
+    - GET /inv/detail/:inv_id — dynamic, single view renders any vehicle
+- Error test (Task 3)
+    - GET /cause-error — intentional 500 caught by middleware
+- Health (optional)
+    - GET /healthz — returns OK
+
+### MVC Flow for Detail View
+
+1. Route: /inv/detail/:inv_id
+2. Controller: inventoryController.buildVehicleDetail
+3. Model: inventory-model.getVehicleById(invId) — parameterized query
+4. Utility: buildVehicleDetailHTML(vehicle) — formats USD and miles, returns HTML
+5. View: views/inventory/detail.ejs renders the utility HTML
+
+### Error Handling
+
+- 404 middleware forwards to global handler
+- Centralized error handler renders views/errors/error.ejs for all errors
+- Only show stack traces in development
+
+### Frontend Checklist (highlights)
+
+- Title and H1 show Make + Model + Year
+- Uses full-size image (not thumbnail)
+- Price shown in USD with currency and commas
+- Mileage has commas
+- Responsive: image and details side-by-side on large screens, stacked on small
+- Accessible: alt text, proper headings, focus styles, no horizontal scrolling
+
+### Testing
+
+1. Local
+- Visit a classification page, click multiple vehicles → /inv/detail/:inv_id
+- Resize to confirm responsive behavior
+- Visit a fake route → 404 error view
+- Click “Test 500 Error” in footer → 500 error view
+- Validate HTML/CSS and run WAVE
+1. Production
+- Push to GitHub
+- Deploy on Render
+- Re-run the tests on production
+- Fix any env or path issues if they appear
+
+### Deployment (Render)
+
+- Connect GitHub repo
+- Set environment variables (DATABASE_URL, PORT, NODE_ENV)
+- Build command: npm install
+- Start command: npm start
+- After deploy, verify routes as in Testing
+
+### Scripts
+
+- npm run dev — nodemon server.js
+- npm start — node server.js
+
+### Notes
+
+- Keep /css/styles.css linked in views/partials/head.ejs
+- Ensure DB pool export path in models/inventory-model.js matches your project
+- Nav links in views/partials/nav.ejs point to /inv/type/:slug
+- Classification cards should link to /inv/detail/<%= item.inv_id %>

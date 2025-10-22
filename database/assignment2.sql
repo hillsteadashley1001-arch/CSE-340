@@ -16,11 +16,11 @@ SELECT account_id FROM ins;
 -- 1.2 Promote Tony to Admin (single row via PK)
 UPDATE account
 SET account_type = 'Admin'
-WHERE account_id = :tony_id;
+WHERE account_id = 3;
 
 -- 1.3 Delete Tony (single row via PK)
 DELETE FROM account
-WHERE account_id = :tony_id;
+WHERE account_id = 3;
 
 -- 1.4 Change GM Hummer description phrase using REPLACE (single query)
 UPDATE inventory

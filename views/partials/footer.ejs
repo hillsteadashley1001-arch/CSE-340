@@ -1,3 +1,24 @@
-<footer class="site-footer">
-	<p class="copyright">© <%= new Date().getFullYear() %> CSE 340 App</p>
+<!-- views/partials/footer.ejs -->
+<footer class="site-footer" role="contentinfo">
+  <div class="container site-footer__inner">
+    <p class="site-footer__brand">
+      <a href="/" class="site-footer__home">Home</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="/inv">Inventory</a>
+    </p>
+
+    <nav class="site-footer__nav" aria-label="Footer">
+      <!-- Task 3: Intentional 500 error trigger -->
+      <a href="/cause-error">Test 500 Error</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="/healthz">Health</a>
+    </nav>
+
+    <p class="site-footer__copy">
+      <span>&copy; <span id="year"><%= new Date().getFullYear() %></span> CSE 340 Project</span>
+    </p>
+  </div>
 </footer>
+
+<!-- Optional: shared scripts -->
+<!-- <script src="/js/main.js" defer></script> -->
