@@ -4,3 +4,251 @@
 *:after {
   box-sizing: border-box;
 }
+
+/* Base Styles */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 2rem; /* creates space around the white box */
+  background-image: url("/images/site/checkerboard.jpg");
+  background-repeat: repeat;
+  background-attachment: fixed;
+  background-size: auto;
+  color: #22212c;
+  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+}
+
+/* White content box wrapper */
+#wrapper {
+  background-color: #fff;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  border: #15b7d9 10px solid;
+  border-radius: 0.3rem;
+  overflow: hidden;
+}
+
+/* Header Styles */
+#top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+}
+
+.siteName a {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #22212c;
+  text-decoration: none;
+}
+
+#tools a {
+  text-decoration: none;
+  color: #22212c;
+}
+
+/* Navigation Styles */
+nav {
+  background-color: #22212c;
+  color: white;
+  padding: 0.5rem 0.5rem; /* Added 0.5rem left/right padding */
+  margin: 0 0.5rem; /* optional: keeps distance from wrapper edge */
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+nav ul li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+nav ul li:hover {
+  background-color: #15b7d9;
+}
+
+/* Main Content */
+main {
+  padding: 1rem;
+}
+
+/* Hero Section */
+.hero-container {
+  position: relative;
+  background-color: #fff;
+  margin-bottom: 2rem;
+}
+
+.hero-image img {
+  height: 20%;
+  margin-left: 15%;
+}
+
+.hero-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #22212c;
+  padding: 1rem;
+  width: 15%;
+  background-color: rgba(255, 255, 255);
+  border-radius: 0.3rem;
+}
+
+.hero-description {
+  color: #15b7d9;
+}
+
+.hero-description h2 {
+  margin-bottom: 0.5rem;
+}
+
+.hero-description p {
+  margin: 0.2rem 0;
+  font-weight: bold;
+}
+
+.hero-cta {
+  margin-top: 1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  text-decoration: none;
+  border-radius: 0.3rem;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background-color: #15b7d9;
+  color: #22212c;
+}
+
+/* Upgrades Section */
+.upgrades {
+  margin-bottom: 2rem;
+}
+
+.upgrades h2 {
+  padding-bottom: 0.5rem;
+}
+
+.upgrades-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.upgrade-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.upgrade-img {
+  background-color: #15b7d9;
+  border: 1px solid #22212c;
+  border-radius: 0.3rem;
+  width: 80%;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.upgrade-img img {
+  max-height: 80px;
+}
+
+.upgrade-item a {
+  color: #22212c;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Reviews Section */
+.reviews h2 {
+  padding-bottom: 0.5rem;
+}
+
+.reviews ul {
+  padding-left: 2rem;
+}
+
+.reviews li {
+  margin-bottom: 0.5rem;
+}
+
+/* Footer Styles */
+footer {
+  padding: 1rem;
+  text-align: left;
+  margin-top: 2rem;
+}
+
+/* Welcome Heading */
+.welcome-heading {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 2rem 1rem 1rem 1rem;
+  color: #22212c;
+  text-align: left;
+}
+
+/* Media query for larger screens */
+@media screen and (min-width: 768px) {
+  .hero-text {
+    width: 17.3%;
+    background-color: rgba(245, 245, 245,0.8);
+    top: 1rem;
+    left: 1rem;
+    padding: 1rem;
+  }
+
+  .main-content {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 2rem;
+  }
+
+  .upgrades-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .upgrade-img {
+    width: 70%;
+  }
+}
+
+/* Media query for even larger screens */
+@media screen and (min-width: 1024px) {
+  .hero-container {
+    height: 400px;
+    overflow: hidden;
+  }
+
+  .hero-image {
+    height: 100%;
+  }
+
+  .hero-image img {
+    object-fit: cover;
+    height: 100%;
+  }
+
+  .upgrades-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
