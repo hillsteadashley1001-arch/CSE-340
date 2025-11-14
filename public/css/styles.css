@@ -60,6 +60,12 @@ nav {
   margin: 0 0.5rem; /* optional: keeps distance from wrapper edge */
 }
 
+nav a {
+  color: white;
+  text-decoration: none;
+}
+
+
 nav ul {
   display: flex;
   list-style: none;
@@ -324,10 +330,83 @@ footer {
   margin-top: 5px;
 }
 
+/* Base reset and layout */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* Main container */
+.vehicle-detail {
+  max-width: 1100px;
+  margin: 60px auto;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading */
+.vehicle-detail h1 {
+  font-size: 34px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #222;
+}
+
+/* Flex layout for image and text */
+.vehicle-info {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* Image styling */
+.vehicle-info img {
+  width: 480px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Text box styling */
+.vehicle-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+.vehicle-info li {
+  font-size: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+}
+
+.vehicle-info li strong {
+  color: #555;
+  font-weight: 600;
+  width: 160px;
+}
+
+/* Optional contact line */
+.vehicle-info li.contact {
+  font-style: italic;
+  color: #444;
+}
+
 /* Notice message */
 .notice {
   text-align: center;
-  font-size: 1.2em;
-  color: #666;
-  margin: 40px 0;
+  font-size: 20px;
+  color: #a00;
+  margin-top: 40px;
 }
