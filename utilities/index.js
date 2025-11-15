@@ -79,7 +79,7 @@ Util.buildInvDetail = async function(data){
     detail += `</ul>`;
 
     detail += `</div>`;
-    detail += `</section>`;
+    detail += `</div>`;
   } else {
     detail = `<p class="notice">Vehicle details not available.</p>`;
   }
