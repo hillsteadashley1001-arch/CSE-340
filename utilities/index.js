@@ -64,11 +64,11 @@ Util.buildInvDetail = async function(data){
     let detail = '';
 
   if (data) {
-    detail += `<section class="vehicle-detail">`;
+    detail += `<div class="vehicle-detail">`;
     detail += `<div class="vehicle-info">`;
 
     // Vehicle image
-    detail += `<img src="${data.inv_image}" alt="Image of ${data.inv_make} ${data.inv_model}" />`;
+    detail += `<img src="${data.inv_image}" alt="Image of ${data.inv_make} ${data.inv_model}" >`;
 
     // Vehicle details list
     detail += `<ul>`;
