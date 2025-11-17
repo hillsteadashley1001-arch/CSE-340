@@ -31,6 +31,9 @@ importers:
       express-validator:
         specifier: ^7.3.0
         version: 7.3.0
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
       pg:
         specifier: ^8.8.0
@@ -196,6 +199,9 @@ packages:
     resolution: {integrity: sha512-ujK2BX5JUun5NR4JuBo83YSXoDDIpoGz3QxgHTzQcHFevkKnwV1in4K7YNuuXQ1W3a2ObXB/P4OTnTZpUyGWiw==}
     engines: {node: '>= 8.0.0'}
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   express@4.21.2:
     resolution: {integrity: sha512-28HqgMZAmih1Czt9ny7qr6ek2qddF4FclbMzwhCREB6OFfH+rXAnuNCwo1/wFvrtbgsQDb4kSbX9de9lFbrXnA==}
@@ -694,6 +700,9 @@ snapshots:
       lodash: 4.17.21
       validator: 13.15.23
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   express@4.21.2:
     dependencies:
