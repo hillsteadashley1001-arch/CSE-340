@@ -12,8 +12,24 @@ const app = express()
 const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
+const accountRoute = require("./routes/accountRoute")
 const utilities = require("./utilities/")
+const session = require("express-session")
+const pool = require('./database/')
 
+/* ***********************
+ * Middleware
+ * ************************/
+ app.use(session({
+  store: new (require('connect-pg-simple')(session))({
+    createTableIfMissing: true,
+    pool,
+  }),
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  name: 'sessionId',
+}))
 
 /* ***********************
  * View Engine and Templates
@@ -32,6 +48,7 @@ app.get("/", utilities.handleErrors(baseController.buildHome))
 //Inventory Route
 console.log('inventory ')
 app.use("/inv", inventoryRoute)
+app.use("/account", AccountRoute)
 // File Not Found Route - must be last route in list
 app.use(async (req, res, next) => {
   next({status: 404, message: 'Sorry, we appear to have lost that page.'})
