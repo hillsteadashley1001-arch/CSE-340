@@ -47,10 +47,19 @@ body {
   text-decoration: none;
 }
 
+.siteName a:hover {
+  text-decoration: underline;
+}
+
 #tools a {
   text-decoration: none;
   color: #22212c;
 }
+
+#tools a:hover{
+  text-decoration: underline;
+}
+
 
 /* Navigation Styles */
 nav {
@@ -81,7 +90,7 @@ nav ul li {
 }
 
 nav ul li:hover {
-  background-color: #15b7d9;
+  background-color: grey;
 }
 
 /* Main Content */
@@ -139,7 +148,12 @@ main {
 
 .btn-primary {
   background-color: #15b7d9;
-  color: #22212c;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: gray;
+  color: white;
 }
 
 /* Upgrades Section */
@@ -182,6 +196,10 @@ main {
   color: #22212c;
   text-decoration: none;
   font-weight: bold;
+}
+
+.upgrade-item a:hover {
+  text-decoration: underline;
 }
 
 /* Reviews Section */
@@ -402,10 +420,10 @@ body {
 
 /* Notice message */
 .notice {
-  text-align: center;
-  font-size: 1.2rem;
-  color: #a00;
-  margin-top: 40px;
+  border: 1px solid #FFDB70;
+  padding: 10px 35px;
+  background: #FFFBEF;
+  font-weight: bold;
 }
 
 /* Responsive tweaks */
@@ -447,4 +465,192 @@ body {
   .vehicle-info li {
     font-size: 0.95rem;
   }
+}
+
+/* Container styling */
+#registerContainer {
+  background-color: #15b7d9; /* CSE Motors blue */
+  padding: 40px;
+  border-radius: 10px;
+  width: 400px;
+  color: black;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Form header */
+#registerContainer p {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* Form layout */
+form fieldset {
+  border: none;
+  padding: 0;
+}
+
+/* Labels and inputs */
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  font-size: 16px;
+}
+
+/* Password note */
+form i {
+  font-size: 14px;
+  color: black;
+  display: block;
+  margin-bottom: 15px;
+}
+
+/* Show password toggle */
+#pswdBtn {
+  font-size: 14px;
+  color: white;
+  background-color: black;
+  padding: 8px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+#pswdBtn:hover {
+  text-decoration: none;
+  background-color: gray;
+}
+
+/* Submit button */
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: gray;
+  color: white;
+}
+
+/* Container styling */
+#loginContainer {
+  background-color: #15b7d9; /* CSE Motors blue */
+  padding: 40px;
+  border-radius: 10px;
+  width: 400px;
+  color: black;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Form header */
+#loginContainer p {
+  text-align: center;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+#loginContainer p a{
+  color: black;
+  text-decoration: none;
+}
+
+#loginContainer p a:hover{
+  text-decoration: underline;
+}
+
+/* Form layout */
+form fieldset {
+  border: none;
+  padding: 0;
+}
+
+/* Labels and inputs */
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: white;
+  color: black;
+  font-size: 16px;
+}
+
+/* Password note */
+form i {
+  font-size: 14px;
+  color: black;
+  display: block;
+  margin-bottom: 15px;
+}
+
+/* Show password toggle */
+#pswdBtn {
+  font-size: 14px;
+  color: white;
+  background-color: black;
+  border: 1px solid white;
+  padding: 8px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+#pswdBtn:hover {
+  text-decoration: none;
+  background-color: gray;
+}
+
+/* Submit button */
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  color:white;
+  background-color: gray;
 }
