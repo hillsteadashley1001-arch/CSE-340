@@ -22,7 +22,7 @@ const utilities = require('./utilities/')
 
 const session = require('express-session')
 const pgSession = require('connect-pg-simple')(session)
-const db = require('./database/') // Exports { query, pool }
+const db = require('./database/') // { query, pool }
 
 /* ***********************
  * Security and Proxy
@@ -32,15 +32,36 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 /* ***********************
+ * View Engine and Templates
+ *************************/
+app.set('view engine', 'ejs')
+app.use(expressLayouts)
+app.set('layout', './layouts/layout') // not at views root
+
+/* ***********************
+ * Body Parsing
+ *************************/
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+/* ***********************
  * Sessions and Flash
  *************************/
+const SESSION_SECRET =
+	process.env.SESSION_SECRET ||
+	(process.env.NODE_ENV === 'development' ? 'dev-only-insecure-secret' : null)
+
+if (!SESSION_SECRET) {
+	throw new Error('SESSION_SECRET is required in production')
+}
+
 app.use(
 	session({
 		store: new pgSession({
 			createTableIfMissing: true,
 			pool: db.pool, // IMPORTANT: pass a pg Pool, not the wrapper object
 		}),
-		secret: process.env.SESSION_SECRET,
+		secret: SESSION_SECRET,
 		resave: true,
 		saveUninitialized: true,
 		name: 'sessionId',
@@ -60,10 +81,23 @@ app.use((req, res, next) => {
 })
 
 /* ***********************
- * Body Parsing
+ * Global Nav (resilient)
  *************************/
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(async (req, res, next) => {
+	try {
+		res.locals.nav = await utilities.getNav()
+	} catch (err) {
+		// Fallback so layout still renders even if DB is down
+		console.error('getNav failed:', err.code || err.message)
+		res.locals.nav = '<ul><li><a href="/" title="Home page">Home</a></li></ul>'
+	}
+	next()
+})
+
+/* ***********************
+ * Optional health endpoint
+ *************************/
+app.get('/health', (req, res) => res.status(200).send('OK'))
 
 /* ***********************
  * Static Assets
@@ -71,23 +105,6 @@ app.use(express.urlencoded({ extended: true }))
 // If your routes/static already serves public assets, keep using it.
 // Otherwise uncomment the line below:
 // app.use(express.static('public'))
-
-/* ***********************
- * View Engine and Templates
- *************************/
-app.set('view engine', 'ejs')
-app.use(expressLayouts)
-app.set('layout', './layouts/layout') // not at views root
-
-app.use(async (req, res, next) => {
-  try {
-    const utilities = require('./utilities/')
-    res.locals.nav = await utilities.getNav()
-    next()
-  } catch (err) {
-    next(err)
-  }
-})
 
 /* ***********************
  * Routes
@@ -108,7 +125,7 @@ app.use('/account', accountRoute)
  * non-error middleware
  *****************************************************************/
 app.use((req, res) => {
-	res.status(404).render('errors/error', {
+	return res.status(404).render('errors/error', {
 		title: 'Not Found',
 		status: 404,
 		message: 'The page you requested was not found.',
@@ -117,32 +134,22 @@ app.use((req, res) => {
 
 /* ***************************************************************
  * General Error Handler (500 and others) — must be last
+ * Includes headersSent guard to avoid double renders
  *****************************************************************/
 app.use((err, req, res, next) => {
-
-// Short-circuit if a response has already started
-
-if (res.headersSent) return next(err)
-
-console.error(err)
-
-const status = err.status || 500
-
-return res.status(status).render('errors/error', {
-
-title: status === 500 ? 'Server Error' : 'Error',
-
-status,
-
-message: status === 500
-
-? 'Something went wrong on the server.'
-
-: (err.message || 'An error occurred.'),
-
+	if (res.headersSent) return next(err) // critical guard
+	console.error(err)
+	const status = err.status || 500
+	return res.status(status).render('errors/error', {
+		title: status === 500 ? 'Server Error' : 'Error',
+		status,
+		message:
+			status === 500
+				? 'Something went wrong on the server.'
+				: err.message || 'An error occurred.',
+	})
 })
 
-})
 /* ***********************
  * Local Server Information
  * Values from .env (environment) file
