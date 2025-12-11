@@ -16,25 +16,27 @@
 
 <div id="registerContainer">
     <p>All fields are required.</p>
-    <form id="registerForm" account="/account/register" method="post">
+    <form id="registerForm" account="/account/register-user" method="post">
         <fieldset>
             <label for="first_name">First Name:</label>
-            <input type="text" name="account_firstname" id="accountFirstname" required 
-            value="<%= locals.account_firstname %>" >
+            <input type="text" name="account_firstname" id="accountFirstname" size="10"
+            required value="<%= locals.account_firstname %>" >
             
             <label for="last_name">Last Name:</label>
             <input type="text" id="lastname" name="account_lastname" required
             value="<%= locals.account_lastname %>" >
 
             <label for="email">Email Address:</label>
-            <input type="email" id="email" name="account_email" required
-            value="<%= locals.account_email %>" >
+            <input type="email" id="email" name="account_email" placeholder="joe
+            .smith@cse340.edu" required value="<%= locals.account_email %>" >
 
             <label for="password">Password:</label>
-            <input type="password" id="password" name="account_password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$">
+            <span>Passwords must be minimum of 12 characters and include 1 
+              capital letter, 1 number and 1 special character.</span>
+            <input type="password" id="accountPassword" name="account_password" 
+            required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.
+            *\s).{12,}$">
 
-            <div><i>Passwords must be minimum of 12 characters and include 1 
-              capital letter, 1 number and 1 special character.</i></div>
             <div id="pswdBtn">Show Password</div>
 
             <button type="submit">Register</button>
