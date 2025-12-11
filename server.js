@@ -119,18 +119,30 @@ app.use((req, res) => {
  * General Error Handler (500 and others) — must be last
  *****************************************************************/
 app.use((err, req, res, next) => {
-	console.error(err)
-	const status = err.status || 500
-	res.status(status).render('errors/error', {
-		title: status === 500 ? 'Server Error' : 'Error',
-		status,
-		message:
-			status === 500
-				? 'Something went wrong on the server.'
-				: err.message || 'An error occurred.',
-	})
+
+// Short-circuit if a response has already started
+
+if (res.headersSent) return next(err)
+
+console.error(err)
+
+const status = err.status || 500
+
+return res.status(status).render('errors/error', {
+
+title: status === 500 ? 'Server Error' : 'Error',
+
+status,
+
+message: status === 500
+
+? 'Something went wrong on the server.'
+
+: (err.message || 'An error occurred.'),
+
 })
 
+})
 /* ***********************
  * Local Server Information
  * Values from .env (environment) file
