@@ -1,0 +1,42 @@
+<%-
+/*
+  Expected locals:
+  - title: string
+  - nav: HTML string (built by utilities.getNav)
+  - messages via connect-flash: use a helper like messages() or render req.flash('notice')
+*/
+-%>
+
+<% if (title) { %>
+  <h1><%= title %></h1>
+<% } %>
+
+<% /* Flash messages (using express-flash helper if you have one) */ %>
+<%- messages && typeof messages === 'function' ? messages() : '' %>
+<% if (locals.notice) { %>
+  <div class="notice"><%= locals.notice %></div>
+<% } %>
+
+<% /* Optional server-side validation errors (array form) */ %>
+<% if (errors && typeof errors.array === 'function') { %>
+  <ul class="notice" role="alert" aria-live="polite">
+    <% errors.array().forEach(error => { %>
+      <li><%= error.msg %></li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<ul class="boldList">
+  <li>
+    <a
+      href="/inv/add-classification"
+      title="Click to add a new vehicle classification"
+    >Add New Classification</a>
+  </li>
+  <li>
+    <a
+      href="/inv/add-inventory"
+      title="Click to add a new vehicle"
+    >Add New Vehicle</a>
+  </li>
+</ul>

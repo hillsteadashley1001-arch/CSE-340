@@ -1,6 +1,13 @@
-<% const d = new Date()
-let year = d.getFullYear() %>
-<footer>
-    <p class="copyright">&copy; <%= year %>, CSE 340 App</p>
-    <a title="intentional error process" href="../errors/">intentional error process</a>
+<footer role="contentinfo">
+  <nav aria-label="Utility">
+    <ul class="footer-links">
+      <!-- other footer links -->
+      <li>
+        <a href="/inv/error" title="Trigger an intentional server error for testing">
+          Test Server Error
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <p>&copy; <%= new Date().getFullYear() %> CSE Motors</p>
 </footer>
