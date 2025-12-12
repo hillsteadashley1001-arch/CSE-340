@@ -2,22 +2,6 @@
 const utilities = require("../utilities/");
 const baseController = {};
 
-<<<<<<< HEAD
-baseController.buildHome = async function(req, res){
-  const nav = await utilities.getNav()
-  res.render("index", {title: "Home", nav})
-
-    req.flash("notice",  "This is a flash message.")
-  res.render("index", 
-    {title: "Home",
-    nav,
-    errors: null,
-  })
-}
-
-
-module.exports = baseController
-=======
 baseController.buildHome = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
@@ -41,4 +25,3 @@ baseController.buildHome = async function (req, res, next) {
 };
 
 module.exports = baseController;
->>>>>>> b3b369d7dbc405228009bcb94f127bd9a00b1120
