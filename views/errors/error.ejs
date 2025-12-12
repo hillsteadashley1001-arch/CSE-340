@@ -1,2 +1,35 @@
-<h1><%= title %></h1>
-<%= message %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title || 'Error' %> — CSE Motors</title>
+  <meta name="description" content="An error occurred while processing your request."/>
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body>
+  <header>
+    <h1><%= title || 'Error' %></h1>
+  </header>
+
+  <main id="main" role="main">
+    <section aria-labelledby="errorHeading">
+      <h2 id="errorHeading">We hit a snag</h2>
+      <p class="notice" role="alert" aria-live="assertive">
+        <strong>Status:</strong> <%= status || 500 %><br>
+        <%= message || 'An unexpected error occurred.' %>
+      </p>
+      <p>
+        You can try the action again, return to the
+        <a href="/" title="Go to home">home page</a>,
+        or use the navigation above.
+      </p>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; <%= new Date().getFullYear() %> CSE Motors</p>
+  </footer>
+</body>
+</html>

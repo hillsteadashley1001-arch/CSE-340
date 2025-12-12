@@ -1,0 +1,69 @@
+<%-
+/*
+  Expected locals:
+  - title: string
+  - nav: HTML string from utilities.getNav
+  - classification_name: sticky value (string)
+  - errors: either an express-validator "mapped" object (recommended) or a Result with .array()
+  - flash via req.flash('notice'): render with your messages() helper, or copy to locals in middleware
+*/
+-%>
+
+<% if (title) { %>
+  <h1><%= title %></h1>
+<% } %>
+
+<% // Flash (express-messages helper) %>
+<% const _msg = typeof messages === 'function' ? messages() : '' %>
+<% if (_msg && _msg.trim().length) { %>
+  <%- _msg %>
+<% } %>
+<% // Single notice string placed in locals %>
+<% if (locals.notice && String(locals.notice).trim().length) { %>
+  <div class="notice"><%= locals.notice %></div>
+<% } %>
+<% // Server-side errors (supports .array() and mapped object) %>
+<%
+  const hasErrors =
+    errors &&
+    (
+      (typeof errors.array === 'function' && errors.array().length > 0) ||
+      (typeof errors.array !== 'function' && Object.keys(errors).length > 0)
+    )
+%>
+<% if (hasErrors) { %>
+  <ul class="message warning" role="alert" aria-live="polite">
+    <% if (typeof errors.array === 'function') { %>
+      <% errors.array().forEach(err => { %><li><%= err.msg %></li><% }) %>
+    <% } else { %>
+      <% Object.values(errors).forEach(err => { %><li><%= err.msg %></li><% }) %>
+    <% } %>
+  </ul>
+<% } %>
+
+<div id="formContainer">
+  <p>Field is required. Name must not contain spaces or special characters.</p>
+
+  <form class="formspread" action="/inv/add-classification" method="post" novalidate>
+    <label for="classification_name">Classification Name</label>
+    <p>Use only letters, numbers, or underscore. No spaces or special characters.</p>
+
+    <input type="text" 
+        name="classification_name" 
+        id="classification_name" 
+        required 
+        pattern="^[A-Za-z0-9_]+$" 
+        title="Use only letters, numbers, or underscore. No spaces or special characters."
+        value="" 
+        aria-describedby="classificationHelp"
+    >
+    <small id="classificationHelp">Example: Trucks, SUV_Compact, ClassicCars</small>
+
+    <% /* Field-specific error (works with mapped errors) */ %>
+    <% if (errors && errors.classification_name) { %>
+      <p id="classificationError" class="error"><%= errors.classification_name.msg %></p>
+    <% } %>
+
+    <button type="submit">Add Classification</button>
+  </form>
+</div>
