@@ -47,31 +47,35 @@ app.use(express.urlencoded({ extended: true }))
 /* ***********************
  * Sessions and Flash
  *************************/
-const SESSION_SECRET =
-	process.env.SESSION_SECRET ||
-	(process.env.NODE_ENV === 'development' ? 'dev-only-insecure-secret' : null)
+app.use(session({
 
-if (!SESSION_SECRET) {
-	throw new Error('SESSION_SECRET is required in production')
-}
+store: new pgSession({
 
-app.use(
-	session({
-		store: new pgSession({
-			createTableIfMissing: true,
-			pool: db.pool, // IMPORTANT: pass a pg Pool, not the wrapper object
-		}),
-		secret: SESSION_SECRET,
-		resave: true,
-		saveUninitialized: true,
-		name: 'sessionId',
-		cookie: {
-			secure: process.env.NODE_ENV !== 'development',
-			httpOnly: true,
-			sameSite: process.env.NODE_ENV !== 'development' ? 'none' : 'lax',
-		},
-	})
-)
+createTableIfMissing: true,
+
+pool: db.pool, // use Pool, not a URL
+
+}),
+
+secret: process.env.SESSION_SECRET,
+
+resave: true,
+
+saveUninitialized: true,
+
+name: 'sessionId',
+
+cookie: {
+
+secure: process.env.NODE_ENV !== 'development',
+
+httpOnly: true,
+
+sameSite: process.env.NODE_ENV !== 'development' ? 'none' : 'lax',
+
+},
+
+}))
 
 // Flash messages
 app.use(require('connect-flash')())
