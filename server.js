@@ -8,33 +8,6 @@
 /* ***********************
  * Require Statements
  *************************/
-<<<<<<< HEAD
-const express = require("express")
-const expressLayouts = require("express-ejs-layouts")
-const env = require("dotenv").config()
-const app = express()
-const static = require("./routes/static")
-const baseController = require("./controllers/baseController")
-const inventoryRoute = require("./routes/inventoryRoute")
-const accountRoute = require("./routes/accountRoute")
-const utilities = require("./utilities/")
-const session = require("express-session")
-const pool = require('./database/')
-
-/* ***********************
- * Middleware
- * ************************/
- app.use(session({
-  store: new (require('connect-pg-simple')(session))({
-    createTableIfMissing: true,
-    pool,
-  }),
-  secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
-  name: 'sessionId',
-}))
-=======
 const express = require('express')
 const expressLayouts = require('express-ejs-layouts')
 require('dotenv').config()
@@ -112,7 +85,6 @@ app.get('/favicon.ico', (_req, res) => res.status(204).end())
 // If your routes/static already serves public assets, keep using it.
 // Otherwise uncomment the line below:
 // app.use(express.static('public'))
->>>>>>> b3b369d7dbc405228009bcb94f127bd9a00b1120
 
 /* ***********************
  * View Engine and Templates
@@ -134,18 +106,6 @@ app.use(async (req, res, next) => {
 /* ***********************
  * Routes
  *************************/
-<<<<<<< HEAD
-app.use(static)
-//Index Route
-app.get("/", utilities.handleErrors(baseController.buildHome))
-//Inventory Route
-console.log('inventory ')
-app.use("/inv", inventoryRoute)
-app.use("/account", AccountRoute)
-// File Not Found Route - must be last route in list
-app.use(async (req, res, next) => {
-  next({status: 404, message: 'Sorry, we appear to have lost that page.'})
-=======
 app.use(staticRoutes)
 
 // Index Route
@@ -167,7 +127,6 @@ app.use((req, res) => {
 		status: 404,
 		message: 'The page you requested was not found.',
 	})
->>>>>>> b3b369d7dbc405228009bcb94f127bd9a00b1120
 })
 
 /* ***************************************************************
