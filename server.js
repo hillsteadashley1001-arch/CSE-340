@@ -22,7 +22,7 @@ const utilities = require('./utilities/')
 
 const session = require('express-session')
 const pgSession = require('connect-pg-simple')(session)
-const db = require('./database/') // { query, pool }
+const db = require('./database/') // Exports { query, pool }
 
 /* ***********************
  * Security and Proxy
@@ -30,19 +30,6 @@ const db = require('./database/') // { query, pool }
 if (process.env.NODE_ENV !== 'development') {
 	app.set('trust proxy', 1) // needed for secure cookies behind proxies like Render/Heroku
 }
-
-/* ***********************
- * View Engine and Templates
- *************************/
-app.set('view engine', 'ejs')
-app.use(expressLayouts)
-app.set('layout', './layouts/layout') // not at views root
-
-/* ***********************
- * Body Parsing
- *************************/
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
 
 /* ***********************
  * Sessions and Flash
@@ -85,30 +72,36 @@ app.use((req, res, next) => {
 })
 
 /* ***********************
- * Global Nav (resilient)
+ * Body Parsing
  *************************/
-app.use(async (req, res, next) => {
-	try {
-		res.locals.nav = await utilities.getNav()
-	} catch (err) {
-		// Fallback so layout still renders even if DB is down
-		console.error('getNav failed:', err.code || err.message)
-		res.locals.nav = '<ul><li><a href="/" title="Home page">Home</a></li></ul>'
-	}
-	next()
-})
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-/* ***********************
- * Optional health endpoint
- *************************/
-app.get('/health', (req, res) => res.status(200).send('OK'))
-
+app.use(express.static('public'))
+app.get('/favicon.ico', (_req, res) => res.status(204).end())
 /* ***********************
  * Static Assets
  *************************/
 // If your routes/static already serves public assets, keep using it.
 // Otherwise uncomment the line below:
 // app.use(express.static('public'))
+
+/* ***********************
+ * View Engine and Templates
+ *************************/
+app.set('view engine', 'ejs')
+app.use(expressLayouts)
+app.set('layout', './layouts/layout') // not at views root
+
+app.use(async (req, res, next) => {
+  try {
+    const utilities = require('./utilities/')
+    res.locals.nav = await utilities.getNav()
+    next()
+  } catch (err) {
+    next(err)
+  }
+})
 
 /* ***********************
  * Routes
@@ -129,7 +122,7 @@ app.use('/account', accountRoute)
  * non-error middleware
  *****************************************************************/
 app.use((req, res) => {
-	return res.status(404).render('errors/error', {
+	res.status(404).render('errors/error', {
 		title: 'Not Found',
 		status: 404,
 		message: 'The page you requested was not found.',
@@ -138,13 +131,11 @@ app.use((req, res) => {
 
 /* ***************************************************************
  * General Error Handler (500 and others) — must be last
- * Includes headersSent guard to avoid double renders
  *****************************************************************/
 app.use((err, req, res, next) => {
-	if (res.headersSent) return next(err) // critical guard
 	console.error(err)
 	const status = err.status || 500
-	return res.status(status).render('errors/error', {
+	res.status(status).render('errors/error', {
 		title: status === 500 ? 'Server Error' : 'Error',
 		status,
 		message:
