@@ -55,7 +55,7 @@
         pattern="^[A-Za-z0-9_]+$" 
         title="Use only letters, numbers, or underscore. No spaces or special characters."
         value="" 
-        aria-describedby="classificationHelp <%= (errors && (errors.classification_name || (errors.array && errors.array().find(e => e.path === 'classification_name')))) ? ' classificationError' : '' %>"
+        aria-describedby="classificationHelp"
     />
     <small id="classificationHelp">Example: Trucks, SUV_Compact, ClassicCars</small>
 
