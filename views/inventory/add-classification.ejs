@@ -48,7 +48,15 @@
     <label for="classification_name">Classification Name</label>
     <p>Use only letters, numbers, or underscore. No spaces or special characters.</p>
 
-    <input type="text" name="classification_name" id="classification_name" required pattern="^[A-Za-z0-9_]+$" title="Use only letters, numbers, or underscore. No spaces or special characters." value="<%= typeof classification_name === 'string' ? classification_name : '' %>" aria-describedby="classificationHelp <%= (errors && (errors.classification_name || (errors.array && errors.array().find(e => e.path === 'classification_name')))) ? ' classificationError' : '' %>"/>
+    <input type="text" 
+        name="classification_name" 
+        id="classification_name" 
+        required 
+        pattern="^[A-Za-z0-9_]+$" 
+        title="Use only letters, numbers, or underscore. No spaces or special characters."
+        value="" 
+        aria-describedby="classificationHelp <%= (errors && (errors.classification_name || (errors.array && errors.array().find(e => e.path === 'classification_name')))) ? ' classificationError' : '' %>"
+    />
     <small id="classificationHelp">Example: Trucks, SUV_Compact, ClassicCars</small>
 
     <% /* Field-specific error (works with mapped errors) */ %>
