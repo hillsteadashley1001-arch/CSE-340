@@ -24,6 +24,7 @@ const utilities = require("./utilities")
 const staticRoutes = require("./routes/static")
 const inventoryRoute = require("./routes/inventoryRoute")
 const accountRoute = require("./routes/accountRoute")
+const reviewRoute = require("./routes/reviewsRoute")
 const baseController = require("./controllers/baseController")
 
 /* =======================
@@ -32,7 +33,7 @@ const baseController = require("./controllers/baseController")
 const app = express()
 
 /* =======================
- * Proxy Trust (Railway / Render)
+ * Trust Proxy (Render / Railway)
  * ======================= */
 if (process.env.NODE_ENV !== "development") {
   app.set("trust proxy", 1)
@@ -110,6 +111,7 @@ app.use(utilities.checkJWTToken)
 app.use(staticRoutes)
 app.use("/inv", inventoryRoute)
 app.use("/account", accountRoute)
+app.use("/reviews", reviewRoute)
 
 app.get(
   "/",
