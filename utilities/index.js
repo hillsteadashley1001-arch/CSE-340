@@ -53,7 +53,10 @@ Util.buildClassificationList = async function (classification_id = null) {
 
   data.forEach((row) => {
     list += `<option value="${row.classification_id}"`
-    if (classification_id && Number(row.classification_id) === Number(classification_id)) {
+    if (
+      classification_id &&
+      Number(row.classification_id) === Number(classification_id)
+    ) {
       list += " selected"
     }
     list += `>${row.classification_name}</option>`
@@ -70,7 +73,89 @@ Util.handleErrors = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next)
 
 /* ****************************************
- * ACCOUNT UPDATE VALIDATION  ✅ NEW
+ * CLASSIFICATION VALIDATION ✅ REQUIRED
+ **************************************** */
+Util.classificationRules = () => [
+  body("classification_name")
+    .trim()
+    .notEmpty()
+    .withMessage("Classification name is required.")
+    .isAlphanumeric()
+    .withMessage("Classification name must be letters and numbers only."),
+]
+
+Util.checkClassificationData = async (req, res, next) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    const nav = await Util.getNav()
+    return res.status(400).render("inventory/add-classification", {
+      title: "Add Classification",
+      nav,
+      errors: errors.array(),
+    })
+  }
+  next()
+}
+
+/* ****************************************
+ * INVENTORY VALIDATION (ADD)
+ **************************************** */
+Util.inventoryRules = () => [
+  body("classification_id").notEmpty().withMessage("Classification is required."),
+  body("inv_make").trim().notEmpty().withMessage("Make is required."),
+  body("inv_model").trim().notEmpty().withMessage("Model is required."),
+  body("inv_description").trim().notEmpty().withMessage("Description is required."),
+  body("inv_image").trim().notEmpty().withMessage("Image path is required."),
+  body("inv_thumbnail").trim().notEmpty().withMessage("Thumbnail path is required."),
+  body("inv_price").isFloat({ gt: 0 }).withMessage("Price must be greater than 0."),
+  body("inv_miles").isInt({ min: 0 }).withMessage("Miles must be 0 or more."),
+  body("inv_color").trim().notEmpty().withMessage("Color is required."),
+  body("inv_year").isInt({ min: 1900 }).withMessage("Year must be valid."),
+]
+
+Util.checkInventoryData = async (req, res, next) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    const nav = await Util.getNav()
+    const classificationList = await Util.buildClassificationList(
+      req.body.classification_id
+    )
+
+    return res.status(400).render("inventory/add-inventory", {
+      title: "Add Inventory",
+      nav,
+      classificationList,
+      errors: errors.array(),
+      ...req.body,
+    })
+  }
+  next()
+}
+
+/* ****************************************
+ * INVENTORY VALIDATION (UPDATE)
+ **************************************** */
+Util.checkUpdateData = async (req, res, next) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    const nav = await Util.getNav()
+    const classificationSelect = await Util.buildClassificationList(
+      req.body.classification_id
+    )
+
+    return res.status(400).render("inventory/edit-inventory", {
+      title: `Edit ${req.body.inv_make} ${req.body.inv_model}`,
+      nav,
+      classificationSelect,
+      errors: errors.array(),
+      ...req.body,
+    })
+  }
+  next()
+}
+
+/* ****************************************
+ * ACCOUNT UPDATE VALIDATION
  **************************************** */
 Util.accountUpdateRules = () => [
   body("account_firstname")
@@ -95,7 +180,6 @@ Util.accountUpdateRules = () => [
 
 Util.checkAccountUpdateData = async (req, res, next) => {
   const errors = validationResult(req)
-
   if (!errors.isEmpty()) {
     const nav = await Util.getNav()
     return res.status(400).render("account/update", {
@@ -116,16 +200,15 @@ Util.passwordRules = () => [
     .isLength({ min: 12 })
     .withMessage("Password must be at least 12 characters.")
     .matches(/[A-Z]/)
-    .withMessage("Password must contain at least one uppercase letter.")
+    .withMessage("Password must include an uppercase letter.")
     .matches(/[0-9]/)
-    .withMessage("Password must contain at least one number.")
+    .withMessage("Password must include a number.")
     .matches(/[^A-Za-z0-9]/)
-    .withMessage("Password must contain at least one special character."),
+    .withMessage("Password must include a special character."),
 ]
 
 Util.checkPasswordData = async (req, res, next) => {
   const errors = validationResult(req)
-
   if (!errors.isEmpty()) {
     const nav = await Util.getNav()
     return res.status(400).render("account/update", {
@@ -141,8 +224,8 @@ Util.checkPasswordData = async (req, res, next) => {
 /* ****************************************
  * JWT helpers
  **************************************** */
-Util.generateToken = (accountData) => {
-  return jwt.sign(
+Util.generateToken = (accountData) =>
+  jwt.sign(
     {
       account_id: accountData.account_id,
       account_email: accountData.account_email,
@@ -151,7 +234,6 @@ Util.generateToken = (accountData) => {
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "1h" }
   )
-}
 
 Util.checkJWTToken = (req, res, next) => {
   const token = req.cookies?.jwt
