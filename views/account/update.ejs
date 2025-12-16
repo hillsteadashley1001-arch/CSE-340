@@ -1,0 +1,83 @@
+<h1><%= title || "Update Account" %></h1>
+
+<%- messages() %>
+
+<% if (errors && errors.length) { %>
+  <ul class="errors">
+    <% errors.forEach(error => { %>
+      <li><%= error.msg %></li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<!-- =========================
+     Update Account Information
+     ========================= -->
+<form action="/account/update" method="post" class="account-form" novalidate>
+  <input type="hidden" name="account_id" value="<%= account_id %>">
+
+  <div class="form-group">
+    <label for="account_firstname">First Name</label>
+    <input
+      type="text"
+      id="account_firstname"
+      name="account_firstname"
+      required
+      value="<%= account_firstname %>"
+      autocomplete="given-name"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="account_lastname">Last Name</label>
+    <input
+      type="text"
+      id="account_lastname"
+      name="account_lastname"
+      required
+      value="<%= account_lastname %>"
+      autocomplete="family-name"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="account_email">Email</label>
+    <input
+      type="email"
+      id="account_email"
+      name="account_email"
+      required
+      value="<%= account_email %>"
+      autocomplete="email"
+    >
+  </div>
+
+  <button type="submit">Update Account</button>
+</form>
+
+<hr>
+
+<!-- =========================
+     Change Password
+     ========================= -->
+<form action="/account/update-password" method="post" class="account-form" novalidate>
+  <input type="hidden" name="account_id" value="<%= account_id %>">
+
+  <div class="form-group">
+    <label for="account_password">New Password</label>
+    <p class="password-hint">
+      Password must be at least 8 characters and contain letters and numbers.
+    </p>
+    <input
+      type="password"
+      id="account_password"
+      name="account_password"
+      required
+      minlength="8"
+      pattern="^(?=.*[A-Za-z])(?=.*\d).{8,}$"
+      autocomplete="new-password"
+    >
+  </div>
+
+  <button type="submit">Change Password</button>
+</form>

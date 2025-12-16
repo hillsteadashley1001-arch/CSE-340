@@ -1,8 +1,24 @@
-<header id="top-header">
-    <span class="siteName">
-        <a href="/" title="Return to home page">CSE Motors</a>
-    </span>
-    <div id="tools">
-        <a title="Click to log in" href="/account/login">My Account</a>
-    </div>
+<header>
+  <nav>
+    <ul class="nav">
+      <!-- Left side -->
+      <li class="site-name">
+        <a href="/">CSE Motors</a>
+      </li>
+
+      <!-- Right side -->
+      <li class="nav-right">
+        <a href="/inv/">Inventory</a>
+
+        <% if (loggedin && accountData) { %>
+          <a href="/account/">
+            Welcome <%= accountData.account_firstname %>
+          </a>
+          <a href="/account/logout">Logout</a>
+        <% } else { %>
+          <a href="/account/login">My Account</a>
+        <% } %>
+      </li>
+    </ul>
+  </nav>
 </header>

@@ -1,37 +1,35 @@
-<% if (title) { %>
-  <h1><%= title %></h1>
-  <% } else { 
-    res.redirect('/')
-  } %>
+<h1><%= title || "Login" %></h1>
 
 <%- messages() %>
 
-<% if (errors) { %>
-  <ul class="notice">
- <% errors.array().forEach(error => { %>
-   <li><%= error.msg %></li>
-<%  }) %>
- </ul>
-<% } %>
+<form action="/account/login" method="post" class="login-form" novalidate>
+  <div class="form-group">
+    <label for="account_email">Email</label>
+    <input
+      type="email"
+      id="account_email"
+      name="account_email"
+      required
+      autocomplete="email"
+      value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
+    >
+  </div>
 
-<div id="loginContainer">
-    <form id="loginForm" action="/account/login" method="post">
-        <fieldset>
-            <label for="email">Email Address:</label>
-            <input type="email" id="email" name="account_email" required
-            value="<%= locals.account_email %>">
+  <div class="form-group">
+    <label for="account_password">Password</label>
+    <input
+      type="password"
+      id="account_password"
+      name="account_password"
+      required
+      autocomplete="current-password"
+    >
+  </div>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="account_password" required
-            pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$">
+  <button type="submit">Login</button>
+</form>
 
-            <div><i>Passwords must be minimum of 12 characters and include 
-            1 capital letter, 1 number and 1 special character.</i></div>
-
-            <div id="pswdBtn">Show Password</div>
-
-            <button type="submit">Login</button>
-        </fieldset>
-    </form>
-    <p>No account? <a href="/account/register">Sign-up</a></p>
-</div>
+<p class="form-footer">
+  Don’t have an account?
+  <a href="/account/register">Register here</a>
+</p>

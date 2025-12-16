@@ -1,11 +1,15 @@
-// controllers/baseController.js
-const utilities = require("../utilities/");
-const baseController = {};
+const utilities = require("../utilities/")
+const baseController = {}
 
-baseController.buildHome = async function (req, res, next) {
-  try {
-    const nav = await utilities.getNav();
+/* ***************************
+ *  Build Home view
+ * ************************** */
+baseController.buildHome = async function (req, res) {
+  const nav = await utilities.getNav()
+  res.render("index", { title: "Home", nav })
+}
 
+<<<<<<< Updated upstream
     // set flash BEFORE rendering (optional)
     req.flash("notice", "This is a flash message.");
 
@@ -25,3 +29,6 @@ baseController.buildHome = async function (req, res, next) {
 };
 
 module.exports = baseController;
+=======
+module.exports = baseController
+>>>>>>> Stashed changes

@@ -1,222 +1,356 @@
-// controllers/invController.js
+/************************************************************
+ * invController.js — Inventory Logic
+ ************************************************************/
 
-const { validationResult } = require('express-validator')
-const invModel = require('../models/inventory-model')
-const utilities = require('../utilities/')
+const invModel = require("../models/inventory-model")
+const reviewModel = require("../models/reviews-model")
+const utilities = require("../utilities/")
 
-const invCont = {}
+const invController = {}
 
-/************************************
- * Build inventory by classification view
- ************************************/
-invCont.buildByClassificationId = async function (req, res, next) {
-	const classification_id = req.params.classificationId
-	const data = await invModel.getInventoryByClassificationId(classification_id)
-	let nav = await utilities.getNav()
-	const grid = await utilities.buildClassificationGrid(data)
+/* ****************************************
+ * Inventory Management View (Admin/Employee)
+ **************************************** */
+invController.buildManagementView = async (req, res, next) => {
+  try {
+    const nav = await utilities.getNav()
+    const classificationSelect = await utilities.buildClassificationList()
 
-	// Derive a human title even if there are no vehicles in that class
-	let className = data?.[0]?.classification_name
-	if (!className) {
-		const classes = await invModel.getClassifications()
-		className =
-			classes.rows.find(
-				(r) => String(r.classification_id) === String(classification_id)
-			)?.classification_name || 'Classification'
-	}
-
-	return res.render('./inventory/classification', {
-		title: `${className} vehicles`,
-		nav,
-		grid,
-		errors: null,
-	})
+    res.render("inventory/management", {
+      title: "Inventory Management",
+      nav,
+      classificationSelect,
+      errors: null,
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
-/************************************
- * Build inventory detail view
- ************************************/
-invCont.buildInvDetail = async function (req, res, next) {
-	const inv_id = req.params.invId
-	const data = await invModel.getInvById(inv_id)
-	let nav = await utilities.getNav()
-
-	if (!data) {
-		req.flash('notice', 'Vehicle not found.')
-		return res.status(404).render('./inventory/detail', {
-			title: 'Vehicle not found',
-			nav,
-			detail: '<p class="notice">No vehicle found.</p>',
-			errors: null,
-		})
-	}
-
-	const detail = await utilities.buildInvDetail(data)
-	const title = `${data.inv_make} ${data.inv_model}`
-
-	return res.render('./inventory/detail', {
-		title,
-		nav,
-		detail,
-		errors: null,
-	})
+/* ****************************************
+ * Public Inventory Entry Point
+ **************************************** */
+invController.buildInventory = async (req, res, next) => {
+  try {
+    // Default public view → first classification
+    return res.redirect("/inv/type/1")
+  } catch (err) {
+    next(err)
+  }
 }
 
-/************************************
- * Management view (Task 1)
- ************************************/
-invCont.managementView = async function (req, res, next) {
-	let nav = await utilities.getNav()
-	return res.render('inventory/management', {
-		title: 'Inventory Management',
-		nav,
-		errors: null,
-	})
+/* ****************************************
+ * Inventory by Classification View (Public)
+ **************************************** */
+invController.buildByClassification = async (req, res, next) => {
+  try {
+    const classification_id = Number(req.params.classification_id)
+    const data = await invModel.getInventoryByClassificationId(classification_id)
+    const nav = await utilities.getNav()
+
+    if (!data || data.length === 0) {
+      return res.status(404).render("inventory/classification", {
+        title: "No Vehicles Found",
+        nav,
+        grid: "<p class='notice'>No vehicles were found for this classification.</p>",
+        errors: null,
+      })
+    }
+
+    const grid = utilities.buildClassificationGrid(data)
+
+    res.render("inventory/classification", {
+      title: `${data[0].classification_name} Vehicles`,
+      nav,
+      grid,
+      errors: null,
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
-/************************************
- * GET: Add Classification form (Task 2)
- * - Sticky form + server-side error display
- ************************************/
-invCont.classificationForm = async function (req, res, next) {
-	let nav = await utilities.getNav()
-	const sticky = req.session?.formData || {}
-	const formErrors = req.session?.formErrors || {}
+/* ****************************************
+ * Inventory JSON Endpoint (Management AJAX)
+ **************************************** */
+invController.getInventoryJSON = async (req, res, next) => {
+  try {
+    const classification_id = Number(req.params.classification_id)
+    const data = await invModel.getInventoryByClassificationId(classification_id)
 
-	res.render('inventory/add-classification', {
-		title: 'Add New Classification',
-		nav,
-		errors: formErrors,
-		classification_name: sticky.classification_name || '',
-	})
+    if (!data || data.length === 0) {
+      return res.status(404).json({ error: "No inventory found." })
+    }
 
-	// Clear one-time sticky/error data
-	req.session.formData = null
-	req.session.formErrors = null
+    res.json(data)
+  } catch (err) {
+    next(err)
+  }
 }
 
-/************************************
- * POST: Add Classification (Task 2)
- * - Uses express-validator
- * - Sticky + flash on error
- ************************************/
-invCont.addClassification = async function (req, res, next) {
-	const { classification_name } = req.body
-	const errors = validationResult(req)
+/* ****************************************
+ * Vehicle Detail View (Public)
+ **************************************** */
+invController.buildByInvId = async (req, res, next) => {
+  try {
+    const inv_id = Number(req.params.inv_id)
+    const item = await invModel.getInventoryById(inv_id)
 
-	if (!errors.isEmpty()) {
-		req.session.formData = { classification_name }
-		req.session.formErrors = errors.mapped()
-		req.flash('notice', 'Please correct the errors and try again.')
-		return res.redirect('/inv/add-classification')
-	}
+    if (!item) {
+      return next({ status: 404, message: "Vehicle not found." })
+    }
 
-	try {
-		const result = await invModel.addClassification(classification_name)
-		if (result) {
-			req.flash(
-				'notice',
-				`Classification ${classification_name} was successfully added.`
-			)
-			// Redirect so nav is rebuilt on render and shows the new classification
-			return res.redirect('/inv/')
-		}
-		// Fallback: insertion returned null/undefined
-		req.session.formData = { classification_name }
-		req.flash('notice', 'Sorry, the classification was not added.')
-		return res.status(501).redirect('/inv/add-classification')
-	} catch (e) {
-		// Likely unique constraint or DB failure
-		req.session.formData = { classification_name }
-		req.flash('notice', 'That classification already exists or could not be added.')
-		return res.status(400).redirect('/inv/add-classification')
-	}
+    const nav = await utilities.getNav()
+    const reviews = await reviewModel.getReviewByInvId(inv_id)
+
+    res.render("inventory/detail", {
+      title: `${item.inv_year} ${item.inv_make} ${item.inv_model}`,
+      nav,
+      errors: null,
+      ...item,
+      reviews,
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
-/************************************
- * GET: Add Inventory form (Task 3)
- * - Builds classification <select> with stickiness
- * - Sticky values for all fields
- ************************************/
-invCont.vehicleForm = async function (req, res, next) {
-	let nav = await utilities.getNav()
-	const sticky = req.session?.formData || {}
-	const formErrors = req.session?.formErrors || {}
+/* ****************************************
+ * Build Add Classification View
+ **************************************** */
+invController.buildAddClassification = async (req, res, next) => {
+  try {
+    const nav = await utilities.getNav()
 
-	const classificationList = await utilities.buildClassificationList(
-		sticky.classification_id ?? null
-	)
-
-	res.render('inventory/add-vehicle', {
-		title: 'Add New Vehicle',
-		nav,
-		errors: formErrors,
-		classificationList,
-
-		// Sticky values
-		inv_make: sticky.inv_make || '',
-		inv_model: sticky.inv_model || '',
-		inv_year: sticky.inv_year || '',
-		inv_description: sticky.inv_description || '',
-		inv_image: sticky.inv_image || '/images/vehicles/no-image.png',
-		inv_thumbnail: sticky.inv_thumbnail || '/images/vehicles/no-image-tn.png',
-		inv_price: sticky.inv_price || '',
-		inv_miles: sticky.inv_miles || '',
-		inv_color: sticky.inv_color || '',
-		classification_id: sticky.classification_id || '',
-	})
-
-	// Clear one-time sticky/error data
-	req.session.formData = null
-	req.session.formErrors = null
+    res.render("inventory/add-classification", {
+      title: "Add Classification",
+      nav,
+      errors: null,
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
-/************************************
- * POST: Add Inventory (Task 3)
- * - Uses express-validator
- * - Sticky + flash on error
- ************************************/
-invCont.addInventory = async function (req, res, next) {
-	const errors = validationResult(req)
+/* ****************************************
+ * Process Add Classification
+ **************************************** */
+invController.addClassification = async (req, res, next) => {
+  try {
+    const { classification_name } = req.body
+    const nav = await utilities.getNav()
 
-	// Coerce numbers to ensure correct types reach the model
-	const payload = {
-		classification_id: Number(req.body.classification_id),
-		inv_make: req.body.inv_make,
-		inv_model: req.body.inv_model,
-		inv_year: Number(req.body.inv_year),
-		inv_description: req.body.inv_description,
-		inv_image: req.body.inv_image || '/images/vehicles/no-image.png',
-		inv_thumbnail: req.body.inv_thumbnail || '/images/vehicles/no-image-tn.png',
-		inv_price: Number(req.body.inv_price),
-		inv_miles: Number(req.body.inv_miles),
-		inv_color: req.body.inv_color,
-	}
+    if (!classification_name || classification_name.trim() === "") {
+      req.flash("notice", "Classification name cannot be empty.")
+      return res.render("inventory/add-classification", {
+        title: "Add Classification",
+        nav,
+        errors: null,
+      })
+    }
 
-	if (!errors.isEmpty()) {
-		req.session.formData = payload
-		req.session.formErrors = errors.mapped()
-		req.flash('notice', 'Please correct the errors and try again.')
-		return res.redirect('/inv/add-inventory')
-	}
+    const result = await invModel.addClassification(classification_name.trim())
 
-	const result = await invModel.addInventory(payload)
-	if (result) {
-		req.flash('notice', 'Inventory item was successfully added.')
-		return res.redirect('/inv/')
-	} else {
-		req.session.formData = payload
-		req.flash('notice', 'Sorry, the inventory item was not added.')
-		return res.status(501).redirect('/inv/add-inventory')
-	}
+    if (result?.rowCount) {
+      req.flash("notice", "Classification added successfully.")
+      return res.redirect("/inv/management")
+    }
+
+    throw new Error("Insert failed")
+  } catch (err) {
+    // 👇 HANDLE DUPLICATE CLASSIFICATION
+    if (err.code === "23505") {
+      req.flash("notice", "That classification already exists.")
+      const nav = await utilities.getNav()
+      return res.render("inventory/add-classification", {
+        title: "Add Classification",
+        nav,
+        errors: null,
+      })
+    }
+
+    next(err)
+  }
 }
 
-/************************************
- * Intentional 500 error trigger (for testing)
- ************************************/
-invCont.errorRoute = async function (req, res, next) {
-	// The route wrapper (utilities.handleErrors) will funnel this to the error middleware
-	throw new Error('Intentional test error: simulating a server failure')
+
+/* ****************************************
+ * Build Add Inventory View
+ **************************************** */
+invController.buildAddInventory = async (req, res, next) => {
+  try {
+    const nav = await utilities.getNav()
+    const classificationList = await utilities.buildClassificationList()
+
+    res.render("inventory/add-inventory", {
+      title: "Add Inventory",
+      nav,
+      classificationList,
+      errors: null,
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
-module.exports = invCont
+/* ****************************************
+ * Process Add Inventory
+ **************************************** */
+invController.addInventory = async (req, res, next) => {
+  try {
+    const {
+      classification_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color,
+    } = req.body
+
+    const result = await invModel.addInventory(
+      classification_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color
+    )
+
+    if (result) {
+      req.flash("notice", "Inventory item added successfully.")
+      return res.redirect("/inv/management")
+    }
+
+    throw new Error("Insert failed")
+  } catch (err) {
+    next(err)
+  }
+}
+
+/* ****************************************
+ * Build Edit Inventory View
+ **************************************** */
+invController.editInventoryView = async (req, res, next) => {
+  try {
+    const inv_id = Number(req.params.inv_id)
+    const item = await invModel.getInventoryById(inv_id)
+
+    if (!item) {
+      req.flash("notice", "Inventory item not found.")
+      return res.redirect("/inv/management")
+    }
+
+    const nav = await utilities.getNav()
+    const classificationSelect = await utilities.buildClassificationList(item.classification_id)
+
+    res.render("inventory/edit-inventory", {
+      title: `Edit ${item.inv_make} ${item.inv_model}`,
+      nav,
+      classificationSelect,
+      errors: null,
+      ...item,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+/* ****************************************
+ * Process Inventory Update
+ **************************************** */
+invController.updateInventory = async (req, res, next) => {
+  try {
+    const {
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color,
+      classification_id
+    } = req.body
+
+    const result = await invModel.updateInventory(
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color,
+      classification_id
+    )
+
+    if (result) {
+      req.flash("notice", "Inventory item updated successfully.")
+      return res.redirect("/inv/management")
+    }
+
+    throw new Error("Update failed")
+  } catch (err) {
+    next(err)
+  }
+}
+
+/* ****************************************
+ * Build Delete Confirmation View
+ **************************************** */
+invController.buildDeleteConfirm = async (req, res, next) => {
+  try {
+    const inv_id = Number(req.params.inv_id)
+    const item = await invModel.getInventoryById(inv_id)
+
+    if (!item) {
+      req.flash("notice", "Inventory item not found.")
+      return res.redirect("/inv/management")
+    }
+
+    const nav = await utilities.getNav()
+
+    res.render("inventory/delete-confirm", {
+      title: `Delete ${item.inv_make} ${item.inv_model}`,
+      nav,
+      errors: null,
+      ...item,
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+/* ****************************************
+ * Process Delete Inventory Item
+ **************************************** */
+invController.deleteInventoryItem = async (req, res, next) => {
+  try {
+    const inv_id = Number(req.body.inv_id)
+    const success = await invModel.deleteInventoryItem(inv_id)
+
+    if (success) {
+      req.flash("notice", "Inventory item deleted successfully.")
+      return res.redirect("/inv/management")
+    }
+
+    req.flash("notice", "Delete failed.")
+    return res.redirect("/inv/management")
+  } catch (err) {
+    next(err)
+  }
+}
+
+module.exports = invController

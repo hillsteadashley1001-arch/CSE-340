@@ -1,13 +1,85 @@
-<% if (title) { %>
-  <h1><%= title %></h1>
-  <% } else { 
-    res.redirect('/')
-  } %>
+<section class="vehicle-detail">
+  <h1><%= inv_year %> <%= inv_make %> <%= inv_model %></h1>
+  <div class="vehicle-layout">
+    <div class="vehicle-image">
+      <img src="<%= inv_image %>" alt="<%= inv_make %> <%= inv_model %>" loading="lazy">
+    </div>
 
+    <div>
+      <div class="vehicle-details">
+        <ul>
+          <li><strong>Price:</strong> $<%= Number(inv_price).toLocaleString() %></li>
+          <li><strong>Miles:</strong> <%= Number(inv_miles).toLocaleString() %></li>
+          <li><strong>Color:</strong> <%= inv_color %></li>
+        </ul>
+      </div>
 
-  <% messages() %>
+      <div class="vehicle-description">
+        <h2>Description: </h2>
+        <p><%= inv_description %></p>
+      </div>
+    </div>
+  </div>
 
+      <!-- =====================
+          REVIEWS
+      ====================== -->
+      <section class="vehicle-reviews">
 
-  <%- detail %>
+        <h2>Customer Reviews</h2>
 
+        <% if (reviews && reviews.length > 0) { %>
+          <ul class="review-list">
+            <% reviews.forEach(review => { %>
+              <li>
+                <strong><%= review.screen_name %></strong>
+                <p><%= review.review_text %></p>
+              </li>
+            <% }) %>
+          </ul>
+        <% } else { %>
+          <p class="notice">No reviews yet.</p>
+        <% } %>
 
+        <!-- =====================
+            REVIEW FORM
+        ====================== -->
+        <div class="vehicle-reviews">
+          <% if (loggedin && accountData) { %>
+
+            <% 
+              const first = accountData.account_firstname || "";
+              const last = accountData.account_lastname || "";
+              const screenName = first && last
+                ? first.charAt(0).toUpperCase() + last
+                : "Anonymous";
+            %>
+
+            <form class="review-form" method="post" action="/reviews/add">
+              <input type="hidden" name="inv_id" value="<%= inv_id %>">
+              <input type="hidden" name="account_id" value="<%= accountData.account_id %>">
+
+              <p>
+                Screen Name:
+                <strong><%= screenName %></strong>
+              </p>
+
+              <label for="review_text">Your Review</label>
+              <textarea
+                id="review_text"
+                name="review_text"
+                required
+              ></textarea>
+
+              <button type="submit">Submit Review</button>
+            </form>
+
+          <% } else { %>
+
+            <p class="notice">
+              You must <a href="/account/login">log in</a> to write a review.
+            </p>
+
+          <% } %>
+        </section>
+</section>

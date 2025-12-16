@@ -1,45 +1,66 @@
-<% if (title) { %>
-  <h1><%= title %></h1>
-  <% } else { 
-    res.redirect('/')
-  } %>
+<h1><%= title || "Register" %></h1>
 
 <%- messages() %>
 
-<% if (errors) { %>
-  <ul class="notice">
- <% errors.array().forEach(error => { %>
-   <li><%= error.msg %></li>
-<%  }) %>
- </ul>
-<% } %>
+<form action="/account/register" method="post" class="register-form" novalidate>
+  <div class="form-group">
+    <label for="account_firstname">First Name</label>
+    <input
+      type="text"
+      id="account_firstname"
+      name="account_firstname"
+      required
+      autocomplete="given-name"
+      value="<%= typeof account_firstname !== 'undefined' ? account_firstname : '' %>"
+    >
+  </div>
 
-<div id="registerContainer">
-    <p>All fields are required.</p>
-    <form id="registerForm" account="/account/register-user" method="post">
-        <fieldset>
-            <label for="first_name">First Name:</label>
-            <input type="text" name="account_firstname" id="accountFirstname" size="10"
-            required value="<%= locals.account_firstname %>" >
-            
-            <label for="last_name">Last Name:</label>
-            <input type="text" id="lastname" name="account_lastname" required
-            value="<%= locals.account_lastname %>" >
+  <div class="form-group">
+    <label for="account_lastname">Last Name</label>
+    <input
+      type="text"
+      id="account_lastname"
+      name="account_lastname"
+      required
+      autocomplete="family-name"
+      value="<%= typeof account_lastname !== 'undefined' ? account_lastname : '' %>"
+    >
+  </div>
 
-            <label for="email">Email Address:</label>
-            <input type="email" id="email" name="account_email" placeholder="joe
-            .smith@cse340.edu" required value="<%= locals.account_email %>" >
+  <div class="form-group">
+    <label for="account_email">Email</label>
+    <input
+      type="email"
+      id="account_email"
+      name="account_email"
+      required
+      autocomplete="email"
+      value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
+    >
+  </div>
 
-            <label for="password">Password:</label>
-            <span>Passwords must be minimum of 12 characters and include 1 
-              capital letter, 1 number and 1 special character.</span>
-            <input type="password" id="accountPassword" name="account_password" 
-            required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.
-            *\s).{12,}$">
+  <div class="form-group">
+    <label for="account_password">Password</label>
+    <p class="password-hint">
+      Password must be at least 12 characters and include:
+      <br>• one uppercase letter
+      <br>• one number
+      <br>• one special character
+    </p>
+    <input
+      type="password"
+      id="account_password"
+      name="account_password"
+      required
+      autocomplete="new-password"
+      pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$"
+    >
+  </div>
 
-            <div id="pswdBtn">Show Password</div>
+  <button type="submit">Register</button>
+</form>
 
-            <button type="submit">Register</button>
-        </fieldset>
-    </form>
-</div>
+<p class="form-footer">
+  Already have an account?
+  <a href="/account/login">Log in here</a>
+</p>

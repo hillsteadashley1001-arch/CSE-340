@@ -1,0 +1,28 @@
+<h1><%= title %></h1>
+
+<%- messages() %>
+
+<% if (locals.loggedin && locals.accountData) { %>
+  <p>Welcome back, <strong><%= accountData.account_firstname %></strong>.</p>
+
+  <% if (accountData.account_type === "Employee" || accountData.account_type === "Admin") { %>
+    <section>
+      <h2>Administration</h2>
+      <ul>
+        <li><a href="/inv/management">Inventory Management</a></li>
+      </ul>
+    </section>
+  <% } %>
+
+  <p>
+    <a href="/account/update/<%= accountData.account_id %>">
+      Update Account Information
+    </a>
+  </p>
+<% } else { %>
+  <p>You are not logged in.</p>
+  <p>
+    <a href="/account/login">Login</a> or
+    <a href="/account/register">Register</a>
+  </p>
+<% } %>

@@ -1,10 +1,7 @@
-<% if (title) { %>
-<h1><%= title %></h1>
-<% } else {
-  res.redirect('/')
-} %>
+<!-- views/inventory/classification.ejs -->
 
-<%# messages() %>
+<h1><%= title || "Vehicle Classification" %></h1>
 
+<%- messages() %>
 
 <%- grid %>

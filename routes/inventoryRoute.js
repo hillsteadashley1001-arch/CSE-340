@@ -1,85 +1,121 @@
-// routes/inventoryRoute.js
-
-// Needed Resources
-const express = require('express')
+/* ****************************************
+ * Inventory Routes
+ **************************************** */
+const express = require("express")
 const router = new express.Router()
+const utilities = require("../utilities")
+const invController = require("../controllers/invController")
 
-// Controllers and utilities
-const invController = require('../controllers/invController')
-const utilities = require('../utilities/')
-
-// Validation middleware (implement these in validators/inventoryValidators.js)
-const {
-	validateClassification,
-	validateInventory,
-} = require('../utilities/inventory-validation')
-
-// -----------------------------------------------------------------------------
-// Existing routes (keep)
-// -----------------------------------------------------------------------------
-
-// Build inventory by classification view
+/* ============================
+ * PUBLIC INVENTORY ENTRY POINT
+ * ============================ */
 router.get(
-	'/type/:classificationId',
-	utilities.handleErrors(invController.buildByClassificationId)
+  "/",
+  utilities.handleErrors(invController.buildInventory)
 )
 
-// Build inventory detail view
+// Public inventory listing
+router.get("/", async (req, res) => {
+  res.redirect("/inv/type/1")
+})
+
+// View inventory by classification (public)
 router.get(
-	'/detail/:invId',
-	utilities.handleErrors(invController.buildInvDetail)
+  "/type/:classification_id",
+  utilities.handleErrors(invController.buildByClassification)
 )
 
-// Error test route
-router.get('/error', utilities.handleErrors(invController.errorRoute))
-
-// -----------------------------------------------------------------------------
-// Assignment routes
-// -----------------------------------------------------------------------------
-
-// Task 1: Management view (access via direct URL only: /inv/)
-router.get('/', utilities.handleErrors(invController.managementView))
-
-// Task 2: Add Classification (GET form + POST process)
+// Vehicle detail view (public)
 router.get(
-	'/add-classification',
-	utilities.handleErrors(invController.classificationForm)
+  "/detail/:inv_id",
+  utilities.handleErrors(invController.buildByInvId)
 )
+
+/* ============================
+ * Inventory Management (protected)
+ * ============================ */
+
+router.get(
+  "/management",
+  utilities.checkEmployeeOrAdmin,
+  utilities.handleErrors(invController.buildManagementView)
+)
+
+
+// Add classification (protected)
+router.get(
+  "/add-classification",
+  utilities.checkEmployeeOrAdmin,
+  utilities.handleErrors(invController.buildAddClassification)
+)
+
 router.post(
-	'/add-classification',
-	validateClassification, // server-side validation
-	utilities.handleErrors(invController.addClassification)
+  "/add-classification",
+  utilities.checkEmployeeOrAdmin,
+  utilities.classificationRules(),
+  utilities.checkClassificationData,
+  utilities.handleErrors(invController.addClassification)
 )
 
-// Back-compat for your original route names (optional; remove if not needed)
+/* ============================
+ * Inventory Item Routes
+ * ============================ */
+// Add inventory (protected)
 router.get(
-	'/newClassification',
-	(req, res) => res.redirect(301, '/inv/add-classification')
+  "/add-inventory",
+  utilities.checkEmployeeOrAdmin,
+  utilities.handleErrors(invController.buildAddInventory)
 )
+
 router.post(
-	'/addClassification',
-	validateClassification,
-	utilities.handleErrors(invController.addClassification)
+  "/add-inventory",
+  utilities.checkEmployeeOrAdmin,
+  utilities.inventoryRules(),
+  utilities.checkInventoryData,
+  utilities.handleErrors(invController.addInventory)
 )
 
-// Task 3: Add Inventory (GET form + POST process)
+// JSON endpoint for AJAX (protected – used in management UI)
 router.get(
-	'/add-inventory',
-	utilities.handleErrors(invController.vehicleForm) // controller should render the add-inventory form
+  "/getInventory/:classification_id",
+  utilities.checkEmployeeOrAdmin,
+  utilities.handleErrors(invController.getInventoryJSON)
 )
+
+// Vehicle detail view (public)
+router.get(
+  "/detail/:inv_id",
+  utilities.handleErrors(invController.buildByInvId)
+)
+
+// Edit inventory item view (protected)
+router.get(
+  "/edit/:inv_id",
+  utilities.checkEmployeeOrAdmin,
+  utilities.handleErrors(invController.editInventoryView)
+)
+
+// Update inventory item (protected)
 router.post(
-	'/add-inventory',
-	validateInventory, // server-side validation
-	utilities.handleErrors(invController.addInventory) // implement in controller
+  "/update",
+  utilities.checkEmployeeOrAdmin,
+  utilities.newInventoryRules(),
+  utilities.checkUpdateData,
+  utilities.handleErrors(invController.updateInventory)
 )
 
-// Back-compat for your original route name (optional; remove if not needed)
-router.get('/newVehicle', (req, res) => res.redirect(301, '/inv/add-inventory'))
-
-// Intentional error route (500)
+// Delete confirmation view (protected)
 router.get(
-	'/error',
-	utilities.handleErrors(invController.errorRoute)
+  "/delete/:inv_id",
+  utilities.checkEmployeeOrAdmin,
+  utilities.handleErrors(invController.buildDeleteConfirm)
+)
+
+// Process delete inventory item (protected)
+router.post(
+  "/delete",
+  utilities.checkEmployeeOrAdmin,
+  utilities.handleErrors(invController.deleteInventoryItem)
 )
 
 module.exports = router

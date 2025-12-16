@@ -1,14 +1,20 @@
-const express = require('express');
-const router = express.Router();
+// routes/static.js
+const express = require("express")
+const router = new express.Router()
+const utilities = require("../utilities")
 
-// Static Routes
-// Set up "public" folder / subfolders for static files
-router.use(express.static("public"));
-router.use("/css", express.static(__dirname + "public/css"));
-router.use("/js", express.static(__dirname + "public/js"));
-router.use("/images", express.static(__dirname + "public/images"));
+/* ****************************************
+ * Static / Utility Routes
+ **************************************** */
 
-module.exports = router;
+// Intentional error route (for testing 500 handler)
+router.get(
+  "/error/test",
+  utilities.handleErrors(async (req, res) => {
+    const error = new Error("Intentional test crash")
+    error.status = 500
+    throw error
+  })
+)
 
-
-
+module.exports = router

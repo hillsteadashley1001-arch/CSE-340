@@ -1,42 +1,56 @@
-<%-
-/*
-  Expected locals:
-  - title: string
-  - nav: HTML string (built by utilities.getNav)
-  - messages via connect-flash: use a helper like messages() or render req.flash('notice')
-*/
--%>
-
 <% if (title) { %>
   <h1><%= title %></h1>
+<% } else { %>
+  <h1>Inventory Management</h1>
 <% } %>
 
-<% /* Flash messages (using express-flash helper if you have one) */ %>
-<%- messages && typeof messages === 'function' ? messages() : '' %>
-<% if (locals.notice) { %>
-  <div class="notice"><%= locals.notice %></div>
-<% } %>
+<%- messages() %>
 
-<% /* Optional server-side validation errors (array form) */ %>
-<% if (errors && typeof errors.array === 'function') { %>
-  <ul class="notice" role="alert" aria-live="polite">
-    <% errors.array().forEach(error => { %>
-      <li><%= error.msg %></li>
-    <% }) %>
+
+<section class="inventory-admin-links">
+  <h2>Inventory Administration</h2>
+
+  <ul class="admin-links">
+    <li>
+      <a href="/inv/add-classification">Add New Classification</a>
+    </li>
+    <li>
+      <a href="/inv/add-inventory">Add New Inventory Item</a>
+    </li>
   </ul>
-<% } %>
+</section>
 
-<ul class="boldList">
-  <li>
-    <a
-      href="/inv/add-classification"
-      title="Click to add a new vehicle classification"
-    >Add New Classification</a>
-  </li>
-  <li>
-    <a
-      href="/inv/add-inventory"
-      title="Click to add a new vehicle"
-    >Add New Vehicle</a>
-  </li>
-</ul>
+<section class="inventory-management">
+  <h2>Manage Inventory</h2>
+
+  <p>
+    Select a classification to view, update, or delete inventory items.
+  </p>
+
+  <label for="classificationList">Choose a Classification</label>
+  <%- classificationSelect %>
+
+  <table id="inventoryDisplay" class="inventory-table">
+    <thead>
+      <tr>
+        <th>Vehicle</th>
+        <th>Year</th>
+        <th>Price</th>
+        <th>Miles</th>
+        <th>Modify</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Populated by JS -->
+    </tbody>
+  </table>
+
+  <noscript>
+    <p class="noscript-warning">
+      JavaScript must be enabled to manage inventory.
+    </p>
+  </noscript>
+</section>
+
+<script src="/js/inventory.js"></script>

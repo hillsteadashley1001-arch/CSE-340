@@ -1,17 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('../partials/head') %>
+  <head>
+    <meta charset="UTF-8">
+    <title><%= title || "CSE Motors" %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
 
-<body>
-    <div id="wrapper">
-        <%- include('../partials/header') %>
-        <%- include('../partials/navigation') %>
+ 
+<div id="wrapper">
+    <body>
+    <!-- Site Header -->
+    <%- include('../partials/header') %>
 
-        <main>
-            <%- body %>
-        </main>
+    <!-- Navigation -->
+    <%- include('../partials/navigation') %>
 
-        <%- include('../partials/footer') %>
-    </div>
-</body>
+    <!-- Main Content -->
+    <main id="content">
+      <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <%- include('../partials/footer') %>
+
+  </body>
+</div>
 </html>
