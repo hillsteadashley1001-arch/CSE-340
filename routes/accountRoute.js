@@ -39,7 +39,7 @@ router.get(
 )
 
 /* ****************************************
- * Update account (protected)
+ * Update account information (protected)
  **************************************** */
 router.get(
   "/update/:account_id",
@@ -50,6 +50,8 @@ router.get(
 router.post(
   "/update",
   utilities.checkLogin,
+  utilities.accountUpdateRules(),
+  utilities.checkAccountUpdateData,
   utilities.handleErrors(accountController.updateAccount)
 )
 
@@ -59,6 +61,8 @@ router.post(
 router.post(
   "/update-password",
   utilities.checkLogin,
+  utilities.passwordRules(),
+  utilities.checkPasswordData,
   utilities.handleErrors(accountController.updatePassword)
 )
 
