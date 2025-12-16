@@ -13,7 +13,7 @@
 <!-- =========================
      Update Account Information
      ========================= -->
-<form action="/account/update" method="post" class="account-form" novalidate>
+<form action="/account/update" method="post" class="account-form">
   <input type="hidden" name="account_id" value="<%= account_id %>">
 
   <div class="form-group">
@@ -23,6 +23,7 @@
       id="account_firstname"
       name="account_firstname"
       required
+      minlength="2"
       value="<%= account_firstname %>"
       autocomplete="given-name"
     >
@@ -35,6 +36,7 @@
       id="account_lastname"
       name="account_lastname"
       required
+      minlength="2"
       value="<%= account_lastname %>"
       autocomplete="family-name"
     >
@@ -60,21 +62,22 @@
 <!-- =========================
      Change Password
      ========================= -->
-<form action="/account/update-password" method="post" class="account-form" novalidate>
+<form action="/account/update-password" method="post" class="account-form">
   <input type="hidden" name="account_id" value="<%= account_id %>">
 
   <div class="form-group">
     <label for="account_password">New Password</label>
     <p class="password-hint">
-      Password must be at least 8 characters and contain letters and numbers.
+      Password must be at least 12 characters and include one uppercase letter,
+      one number, and one special character.
     </p>
     <input
       type="password"
       id="account_password"
       name="account_password"
       required
-      minlength="8"
-      pattern="^(?=.*[A-Za-z])(?=.*\d).{8,}$"
+      minlength="12"
+      pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{12,}$"
       autocomplete="new-password"
     >
   </div>
