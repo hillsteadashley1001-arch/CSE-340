@@ -151,9 +151,7 @@ const port = process.env.PORT || 3000
 const host = process.env.HOST || "localhost"
 
 app.listen(port, () => {
-<<<<<<< Updated upstream
 	console.log(`app listening on ${host}:${port}`)
-=======
   console.log(`🚀 Server running at http://${host}:${port}`)
->>>>>>> Stashed changes
+  console.log(`🚀 Server running at http://${host}:${port}`)
 })
