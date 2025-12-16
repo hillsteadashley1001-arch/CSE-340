@@ -73,7 +73,7 @@ Util.handleErrors = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next)
 
 /* ****************************************
- * CLASSIFICATION VALIDATION ✅ REQUIRED
+ * CLASSIFICATION VALIDATION
  **************************************** */
 Util.classificationRules = () => [
   body("classification_name")
@@ -81,11 +81,12 @@ Util.classificationRules = () => [
     .notEmpty()
     .withMessage("Classification name is required.")
     .isAlphanumeric()
-    .withMessage("Classification name must be letters and numbers only."),
+    .withMessage("Classification name must contain only letters and numbers."),
 ]
 
 Util.checkClassificationData = async (req, res, next) => {
   const errors = validationResult(req)
+
   if (!errors.isEmpty()) {
     const nav = await Util.getNav()
     return res.status(400).render("inventory/add-classification", {
@@ -104,17 +105,21 @@ Util.inventoryRules = () => [
   body("classification_id").notEmpty().withMessage("Classification is required."),
   body("inv_make").trim().notEmpty().withMessage("Make is required."),
   body("inv_model").trim().notEmpty().withMessage("Model is required."),
+  body("inv_year").isInt({ min: 1900 }).withMessage("Year must be valid."),
   body("inv_description").trim().notEmpty().withMessage("Description is required."),
   body("inv_image").trim().notEmpty().withMessage("Image path is required."),
   body("inv_thumbnail").trim().notEmpty().withMessage("Thumbnail path is required."),
   body("inv_price").isFloat({ gt: 0 }).withMessage("Price must be greater than 0."),
   body("inv_miles").isInt({ min: 0 }).withMessage("Miles must be 0 or more."),
   body("inv_color").trim().notEmpty().withMessage("Color is required."),
-  body("inv_year").isInt({ min: 1900 }).withMessage("Year must be valid."),
 ]
+
+/* ✅ Alias required by inventoryRoute.js */
+Util.newInventoryRules = Util.inventoryRules
 
 Util.checkInventoryData = async (req, res, next) => {
   const errors = validationResult(req)
+
   if (!errors.isEmpty()) {
     const nav = await Util.getNav()
     const classificationList = await Util.buildClassificationList(
@@ -137,6 +142,7 @@ Util.checkInventoryData = async (req, res, next) => {
  **************************************** */
 Util.checkUpdateData = async (req, res, next) => {
   const errors = validationResult(req)
+
   if (!errors.isEmpty()) {
     const nav = await Util.getNav()
     const classificationSelect = await Util.buildClassificationList(
@@ -180,6 +186,7 @@ Util.accountUpdateRules = () => [
 
 Util.checkAccountUpdateData = async (req, res, next) => {
   const errors = validationResult(req)
+
   if (!errors.isEmpty()) {
     const nav = await Util.getNav()
     return res.status(400).render("account/update", {
@@ -209,6 +216,7 @@ Util.passwordRules = () => [
 
 Util.checkPasswordData = async (req, res, next) => {
   const errors = validationResult(req)
+
   if (!errors.isEmpty()) {
     const nav = await Util.getNav()
     return res.status(400).render("account/update", {
