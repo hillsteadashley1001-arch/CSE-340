@@ -799,16 +799,16 @@ textarea:focus {
   margin-bottom: 1rem;
 }
 
-.admin-links {
+.admin-links, .inventory-links {
   list-style: none;
   padding: 0;
 }
 
-.admin-links li {
+.admin-links li, .inventory-links li {
   margin-bottom: 0.75rem;
 }
 
-.admin-links a {
+.admin-links a, .inventory-links a {
   display: inline-block;
   padding: 0.75rem 1rem;
   background-color: #1f3a5f;
@@ -817,132 +817,8 @@ textarea:focus {
   border-radius: 4px;
 }
 
-.admin-links a:hover {
+.admin-links a:hover, .inventory-links a:hover {
   background-color: #16304d;
-}
-
-/* =========================
-   Inventory Management Page
-   ========================= */
-
-.inventory-admin-links,
-.inventory-management {
-  margin: 2rem 0;
-  padding: 1.5rem;
-  background-color: #ffffff;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-/* Section headings */
-.inventory-admin-links h2,
-.inventory-management h2 {
-  margin-bottom: 1rem;
-  font-size: 1.4rem;
-  color: #222;
-}
-
-/* =========================
-   Admin Links
-   ========================= */
-
-.admin-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.admin-links li {
-  margin-bottom: 0.75rem;
-}
-
-.admin-links a {
-  display: inline-block;
-  padding: 0.6rem 1rem;
-  background-color: #005bbb;
-  color: #ffffff;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
-}
-
-.admin-links a:hover,
-.admin-links a:focus {
-  background-color: #003f80;
-}
-
-/* =========================
-   Inventory Management
-   ========================= */
-
-.inventory-management p {
-  margin-bottom: 1rem;
-  color: #444;
-}
-
-.inventory-management label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-/* Classification select */
-#classificationList {
-  max-width: 320px;
-  padding: 0.4rem;
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-}
-
-/* =========================
-   Inventory Table
-   ========================= */
-
-.inventory-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.inventory-table th,
-.inventory-table td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.inventory-table th {
-  background-color: #f5f5f5;
-  font-weight: 700;
-}
-
-.inventory-table tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-.inventory-table a {
-  color: #005bbb;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.inventory-table a:hover {
-  text-decoration: underline;
-}
-
-/* =========================
-   NoScript Warning
-   ========================= */
-
-.noscript-warning {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background-color: #ffe6e6;
-  color: #900;
-  border: 1px solid #cc0000;
-  border-radius: 4px;
-  font-weight: 600;
 }
 
 
