@@ -67,6 +67,38 @@ Util.buildClassificationList = async function (classification_id = null) {
 }
 
 /* ****************************************
+ * Inventory grid builder ✅ REQUIRED
+ **************************************** */
+Util.buildClassificationGrid = function (data) {
+  let grid = '<ul id="inv-display">'
+
+  if (Array.isArray(data) && data.length > 0) {
+    data.forEach((vehicle) => {
+      grid += `
+        <li>
+          <a href="/inv/detail/${vehicle.inv_id}">
+            <img src="${vehicle.inv_thumbnail}"
+                 alt="Image of ${vehicle.inv_make} ${vehicle.inv_model}">
+          </a>
+          <div class="namePrice">
+            <h2>
+              <a href="/inv/detail/${vehicle.inv_id}">
+                ${vehicle.inv_make} ${vehicle.inv_model}
+              </a>
+            </h2>
+            <span>$${new Intl.NumberFormat().format(vehicle.inv_price)}</span>
+          </div>
+        </li>`
+    })
+  } else {
+    grid += `<li class="no-vehicles">Sorry, no vehicles could be found.</li>`
+  }
+
+  grid += "</ul>"
+  return grid
+}
+
+/* ****************************************
  * Error handler wrapper
  **************************************** */
 Util.handleErrors = (fn) => (req, res, next) =>
@@ -114,7 +146,7 @@ Util.inventoryRules = () => [
   body("inv_color").trim().notEmpty().withMessage("Color is required."),
 ]
 
-/* ✅ Alias required by inventoryRoute.js */
+/* Alias required by inventoryRoute.js */
 Util.newInventoryRules = Util.inventoryRules
 
 Util.checkInventoryData = async (req, res, next) => {
