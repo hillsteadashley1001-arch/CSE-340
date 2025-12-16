@@ -235,8 +235,4 @@ accountController.registerAccount = async (req, res, next) => {
   }
 }
 
-<<<<<<< Updated upstream
-module.exports = { buildLogin, buildRegister, registerAccount }
-=======
 module.exports = accountController
->>>>>>> Stashed changes
