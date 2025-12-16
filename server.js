@@ -13,14 +13,12 @@ const cookieParser = require("cookie-parser")
 const flash = require("connect-flash")
 const messages = require("express-messages")
 require("dotenv").config()
-const reviewsRoute = require("./routes/reviewsRoute")
-
 
 /* =======================
  * Local Modules
  * ======================= */
-const db = require("./database/")
-const utilities = require("./utilities/")
+const db = require("./database")
+const utilities = require("./utilities")
 
 /* Routes / Controllers */
 const staticRoutes = require("./routes/static")
@@ -34,7 +32,7 @@ const baseController = require("./controllers/baseController")
 const app = express()
 
 /* =======================
- * Proxy / Trust
+ * Proxy Trust (Railway / Render)
  * ======================= */
 if (process.env.NODE_ENV !== "development") {
   app.set("trust proxy", 1)
@@ -92,18 +90,19 @@ app.use(expressLayouts)
 app.set("layout", "./layouts/layout")
 
 /* =======================
- * JWT Authentication
- * ======================= */
-app.use(utilities.checkJWTToken)
-
-/* =======================
  * Default Template Locals
  * ======================= */
 app.use((req, res, next) => {
-  res.locals.loggedin = res.locals.loggedin || false
-  res.locals.accountData = res.locals.accountData || null
+  res.locals.loggedin = false
+  res.locals.accountData = null
+  res.locals.nav = ""
   next()
 })
+
+/* =======================
+ * JWT Authentication
+ * ======================= */
+app.use(utilities.checkJWTToken)
 
 /* =======================
  * Routes
@@ -111,9 +110,11 @@ app.use((req, res, next) => {
 app.use(staticRoutes)
 app.use("/inv", inventoryRoute)
 app.use("/account", accountRoute)
-app.use("/reviews", reviewsRoute)
 
-app.get("/", utilities.handleErrors(baseController.buildHome))
+app.get(
+  "/",
+  utilities.handleErrors(baseController.buildHome)
+)
 
 /* =======================
  * 404 Handler
@@ -140,7 +141,7 @@ app.use(async (err, req, res, _next) => {
   res.status(status).render("errors/error", {
     title: status === 404 ? "Page Not Found" : "Server Error",
     message,
-    nav: res.locals.nav || "",
+    nav: res.locals.nav,
   })
 })
 
@@ -151,7 +152,5 @@ const port = process.env.PORT || 3000
 const host = process.env.HOST || "localhost"
 
 app.listen(port, () => {
-	console.log(`app listening on ${host}:${port}`)
-  console.log(`🚀 Server running at http://${host}:${port}`)
   console.log(`🚀 Server running at http://${host}:${port}`)
 })
