@@ -806,7 +806,7 @@ textarea:focus {
   padding: 0;
 }
 
-.admin-links li, .inventory-links li {
+.admin-links li, .inventory-links p {
   margin-bottom: 0.75rem;
 }
 
