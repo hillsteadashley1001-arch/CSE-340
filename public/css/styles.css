@@ -788,13 +788,13 @@ textarea:focus {
   }
 }
 
-.inventory-admin-links, .inventory-management-links, .inventory-management-links {
+.inventory-admin-links, .inventory-management-links, .inventory-management {
   background: #fff;
   padding: 1.5rem;
   border-radius: 6px;
 }
 
-.inventory-admin-links h2, .inventory-management-links h3, .inventory-management-links h2 {
+.inventory-admin-links h2, .inventory-management-links h2 {
   margin-bottom: 1rem;
 }
 
