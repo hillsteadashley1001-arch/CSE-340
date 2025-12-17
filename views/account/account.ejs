@@ -3,7 +3,7 @@
 <%- messages() %>
 
 <% if (locals.accountData) { %>
-  <h2>Welcome <%= accountData.account_firstname %></h2>
+  <h3>Welcome <%= accountData.account_firstname %></h3>
 
 
   <% if (accountData.account_type === "Employee" || accountData.account_type === "Admin") { %>
